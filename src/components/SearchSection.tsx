@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useDebounce from '../hooks/useDebounce';
-import axios from 'axios';
+import { getSearchResults } from '../apis/searchApis';
 
 type ResultsType = {
   name: string;
@@ -17,21 +17,14 @@ export default function SearchSection() {
 
   const SearchTerm = useDebounce(searchInput, 500);
 
-  useEffect(() => {
-    searchItems(SearchTerm);
-  }, [SearchTerm]);
+  async function onSearchData() {
+    const response = await getSearchResults(SearchTerm);
+    setSearchResults(response);
+  }
 
-  const searchItems = async (SearchTerm: string) => {
-    try {
-      if (SearchTerm) {
-        const response = await axios.get(`api/v1/search-conditions/?name=${SearchTerm}`);
-        console.info('calling api');
-        setSearchResults(response.data);
-      } else setSearchResults([{ name: '데이터 없음', id: 0 }]);
-    } catch {
-      alert('결과를 불러오는 중 에러가 발생했습니다.');
-    }
-  };
+  useEffect(() => {
+    onSearchData();
+  }, [SearchTerm]);
 
   return (
     <div>
