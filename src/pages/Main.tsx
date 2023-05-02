@@ -1,3 +1,5 @@
+import SearchSection from '../components/SearchSection';
+
 export default function Main() {
   return (
     <div>
@@ -6,8 +8,7 @@ export default function Main() {
         <br />
         온라인으로 참여하기
       </h2>
-      <input type="text" />
-      <button>검색</button>
+      <SearchSection />
     </div>
   );
 }
