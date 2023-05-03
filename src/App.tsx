@@ -1,5 +1,9 @@
 import axios from 'axios';
 import { useEffect } from 'react';
+import styled from 'styled-components';
+import MainLabel from './components/MainLabel';
+import SearchForm from './components/SearchForm';
+import SearchList from './components/SearchList';
 
 interface IFetch {
   name: string;
@@ -17,7 +21,28 @@ function App() {
     })();
   }, []);
 
-  return <h1>원티드 프리온보딩 프론트엔드 인턴십(4월) 2주차 기업과제, 7팀</h1>;
+  return (
+    <MainOutlet>
+      <MainContainer>
+        <MainLabel />
+        <SearchForm />
+        <SearchList />
+      </MainContainer>
+    </MainOutlet>
+  );
 }
 
 export default App;
+
+const MainOutlet = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+  background-color: LightSkyBlue;
+`;
+
+const MainContainer = styled.div`
+  width: 500px;
+  margin: 0 auto;
+`;
