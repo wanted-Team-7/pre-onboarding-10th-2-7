@@ -8,10 +8,10 @@ function SearchList({ searchResult }: SearchListType) {
       {searchResult.length === 0 ? (
         <div>검색어 없음</div>
       ) : (
-        searchResult.map(item => (
+        searchResult.slice(0, 7).map(item => (
           <ListItem key={item.id}>
             <Image src={`${process.env.PUBLIC_URL}/assets/search.svg`} alt="search" />
-            <p>{'sampleText' + item}</p>
+            <p>{item.name}</p>
           </ListItem>
         ))
       )}

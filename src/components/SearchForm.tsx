@@ -1,11 +1,32 @@
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { SearchFormType } from '../types/search';
+import { searchApi } from '../api/searchApi';
 
 function SearchForm({ setSearchResult }: SearchFormType) {
+  const [search, setSearch] = useState<string>('');
+
+  const handleChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
+
+  useEffect(() => {
+    const getSearchList = async () => {
+      const { data: result } = await searchApi(search);
+      setSearchResult(result);
+    };
+    getSearchList();
+  }, [search, setSearchResult]);
+
   return (
     <Form>
       <Image src={`${process.env.PUBLIC_URL}/assets/search.svg`} alt="search" />
-      <Input type="text" placeholder="질환명을 입력해 주세요." />
+      <Input
+        type="text"
+        placeholder="질환명을 입력해 주세요."
+        value={search}
+        onChange={handleChangeSearch}
+      />
       <Button>검색</Button>
     </Form>
   );
