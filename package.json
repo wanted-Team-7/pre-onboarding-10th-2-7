@@ -12,10 +12,12 @@
     "@types/react-dom": "^18.2.1",
     "@types/styled-components": "^5.1.26",
     "axios": "^1.4.0",
+    "http-proxy-middleware": "^2.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "styled-components": "^5.3.10",
+    "styled-reset": "^4.4.6",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
@@ -59,5 +61,12 @@
     "husky": "^8.0.3",
     "lint-staged": "^13.2.2",
     "prettier": "^2.8.8"
+  },
+  "options": {
+    "allowedHosts": [
+      "localhost",
+      ".localhost"
+    ],
+    "proxy": "https://api.clinicaltrialskorea.com/"
   }
 }
