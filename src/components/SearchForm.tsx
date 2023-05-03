@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { SearchFormType } from '../types/search';
 import { searchApi } from '../api/searchApi';
+import useDebounce from '../hook/useDebounce';
 
 function SearchForm({ setSearchResult }: SearchFormType) {
   const [search, setSearch] = useState<string>('');
+  const debouncedSearch = useDebounce(search, 500);
 
   const handleChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
@@ -12,11 +14,11 @@ function SearchForm({ setSearchResult }: SearchFormType) {
 
   useEffect(() => {
     const getSearchList = async () => {
-      const { data: result } = await searchApi(search);
+      const { data: result } = await searchApi(debouncedSearch);
       setSearchResult(result);
     };
     getSearchList();
-  }, [search, setSearchResult]);
+  }, [debouncedSearch]);
 
   return (
     <Form>
