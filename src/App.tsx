@@ -17,14 +17,35 @@ function App() {
   const inputOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchKeyword(e.currentTarget.value);
     setIsLoading(true);
+    setElIndexFocused(-1);
   };
   const inputOnFocusHandler = () => {
     setIsInputFocused(true);
   };
   const inputOnBlurHandler = () => {
     setIsInputFocused(false);
+    setElIndexFocused(-1);
   };
-  const inputOnKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {};
+  const inputOnKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (searchData.length === 0 || (e.code !== 'ArrowUp' && e.code !== 'ArrowDown')) return;
+
+    e.preventDefault();
+    if (e.code === 'ArrowUp') {
+      if (elIndexFocused <= 0) {
+        setElIndexFocused(searchData.length - 1);
+      } else {
+        setElIndexFocused(prev => prev - 1);
+      }
+    }
+
+    if (e.code === 'ArrowDown') {
+      if (elIndexFocused === searchData.length - 1) {
+        setElIndexFocused(0);
+      } else {
+        setElIndexFocused(prev => prev + 1);
+      }
+    }
+  };
   const liMouseOverHandler = (e: React.MouseEvent<HTMLLIElement>) => {};
 
   useEffect(() => {
@@ -49,6 +70,7 @@ function App() {
         onFocus={inputOnFocusHandler}
         onBlur={inputOnBlurHandler}
         onKeyDown={inputOnKeyDownHandler}
+        isFocus={isInputFocused}
       />
 
       {isInputFocused && (

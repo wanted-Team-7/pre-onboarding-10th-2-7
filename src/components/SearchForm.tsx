@@ -4,6 +4,7 @@ import InputIcon from './InputIcon';
 
 interface ISearchForm {
   value: string;
+  isFocus: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus: () => void;
   onBlur: () => void;
@@ -15,20 +16,20 @@ function SearchForm(props: ISearchForm) {
     e.preventDefault();
   };
   return (
-    <Form onSubmit={formSumbitHandler}>
+    <Form onSubmit={formSumbitHandler} isFocus={props.isFocus}>
       <SearchInput type="text" placeholder="질환명을 입력해 주세요." {...props} />
       <InputIcon />
     </Form>
   );
 }
 
-const Form = styled.form`
+const Form = styled.form<{ isFocus: boolean }>`
   width: 300px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  border: '2px solid rgba(0,0,0,0.7)';
+  border: ${props => (props.isFocus ? '2px solid #0074cc;' : '2px solid rgba(0,0,0,0.7)')};
   border-radius: 28px;
   padding: 10px 8px;
 `;
