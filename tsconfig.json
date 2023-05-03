@@ -22,6 +22,6 @@
   },
   "include": [
     "src",
-    "src/svg.d.tsx",
+    "src/custom.d.ts",
   ]
 }

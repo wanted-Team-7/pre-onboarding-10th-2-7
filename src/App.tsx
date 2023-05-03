@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import SearchForm from './components/SearchForm';
-import { useState } from 'react';
 import SearchResult from './components/SearchResult';
-import SearchIcon from '../assets/search_icon.svg';
+// import SearchIcon from './assets/search_icon.svg';
 import { DEBOUNCE_TIMEOUT_SEC } from './constants/constant';
-import { ISearchData, getSearchData } from './apis/searchAPI';
+// import { ISearchData, getSearchData } from './apis/searchAPI';
+import { ISearchData, getSearchData } from './apis/searchApi';
 
 function App() {
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -46,7 +46,10 @@ function App() {
       }
     }
   };
-  const liMouseOverHandler = (e: React.MouseEvent<HTMLLIElement>) => {};
+  const liMouseOverHandler = (e: React.MouseEvent<HTMLLIElement>) => {
+    // if (+e.currentTarget.dataset?.index === elIndexFocused) return;
+    // setElIndexFocused(+e.currentTarget?.dataset.index);
+  };
 
   useEffect(() => {
     const debounceTimeout = setTimeout(async () => {
@@ -85,7 +88,7 @@ function App() {
               (searchKeyword !== '' && (
                 <>
                   <SearchResultKeyword>
-                    <SearchIcon width={16} height={16} color="rgba(0, 0, 0, 0.5)" />
+                    {/* <SearchIcon width={16} height={16} color="rgba(0, 0, 0, 0.5)" /> */}
                     <strong>{searchKeyword}</strong>
                   </SearchResultKeyword>
                 </>
