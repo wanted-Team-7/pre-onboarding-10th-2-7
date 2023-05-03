@@ -1,11 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { SearchFormType } from '../types/search';
 import { searchApi } from '../api/searchApi';
 import useDebounce from '../hook/useDebounce';
 
-function SearchForm({ setSearchResult }: SearchFormType) {
-  const [search, setSearch] = useState<string>('');
+function SearchForm({
+  search,
+  setSearch,
+  setIndex,
+  setSearchResult,
+  handleKeyDown,
+}: SearchFormType) {
   const debouncedSearch = useDebounce(search, 500);
 
   const handleChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,6 +21,7 @@ function SearchForm({ setSearchResult }: SearchFormType) {
     const getSearchList = async () => {
       const { data: result } = await searchApi(debouncedSearch);
       setSearchResult(result);
+      setIndex(-1);
     };
     getSearchList();
   }, [debouncedSearch]);
@@ -28,6 +34,7 @@ function SearchForm({ setSearchResult }: SearchFormType) {
         placeholder="질환명을 입력해 주세요."
         value={search}
         onChange={handleChangeSearch}
+        onKeyDown={handleKeyDown}
       />
       <Button>검색</Button>
     </Form>
@@ -36,7 +43,7 @@ function SearchForm({ setSearchResult }: SearchFormType) {
 
 export default SearchForm;
 
-const Form = styled.form`
+const Form = styled.div`
   position: relative;
   display: flex;
   align-items: center;
