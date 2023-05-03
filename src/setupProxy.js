@@ -5,7 +5,6 @@ module.exports = function (app) {
     '/api',
     createProxyMiddleware({
       target: 'https://api.clinicaltrialskorea.com',
-      secure: false,
       changeOrigin: true,
     })
   );
