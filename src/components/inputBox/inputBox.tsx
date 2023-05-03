@@ -13,9 +13,27 @@ const InputBox = ({ setSearchList }: SetSearchListProp) => {
     setInputValue(e.target.value);
   };
 
+  // const checkCacheExpire = () => {
+  //   setInterval(() => {
+  //     // 만료시간 지난 캐시 삭제
+  //     console.log('expire');
+  //     for (let elem in localStorage) {
+  //       const test = localStorage.getItem(elem);
+  //       const localStorageElem: StorageItem = JSON.parse(test!);
+  //       if (localStorageElem?.expireTime && localStorageElem?.expireTime <= Date.now()) {
+  //         localStorage.removeItem(elem);
+  //       }
+  //     }
+  //   }, 4000);
+  // };
+
+  // useEffect(() => {
+  //   checkCacheExpire();
+  // }, []);
+
   useEffect(() => {
     const getSearchWordList = async () => {
-      const { data: result } = await getSearchWord(debounceValue);
+      const result = await getSearchWord(debounceValue);
       setSearchList(result);
     };
 
