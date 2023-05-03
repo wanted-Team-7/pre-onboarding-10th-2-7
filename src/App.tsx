@@ -18,8 +18,12 @@ function App() {
     setSearchKeyword(e.currentTarget.value);
     setIsLoading(true);
   };
-  const inputOnFocusHandler = () => {};
-  const inputOnBlurHandler = () => {};
+  const inputOnFocusHandler = () => {
+    setIsInputFocused(true);
+  };
+  const inputOnBlurHandler = () => {
+    setIsInputFocused(false);
+  };
   const inputOnKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {};
   const liMouseOverHandler = (e: React.MouseEvent<HTMLLIElement>) => {};
 
@@ -33,7 +37,6 @@ function App() {
         console.error('Fetch error! ', error);
       }
     }, DEBOUNCE_TIMEOUT_SEC * 1000);
-
     return () => clearTimeout(debounceTimeout);
   }, [searchKeyword]);
   return (
