@@ -1,16 +1,15 @@
 import styled from 'styled-components';
+import { SearchListType } from '../types/search';
 
-function SearchList() {
-  const result = [0, 1, 2];
-
+function SearchList({ searchResult }: SearchListType) {
   return (
     <List>
       <ListLabel>추천 검색어</ListLabel>
-      {result.length === 0 ? (
+      {searchResult.length === 0 ? (
         <div>검색어 없음</div>
       ) : (
-        result.map(item => (
-          <ListItem key={item}>
+        searchResult.map(item => (
+          <ListItem key={item.id}>
             <Image src={`${process.env.PUBLIC_URL}/assets/search.svg`} alt="search" />
             <p>{'sampleText' + item}</p>
           </ListItem>

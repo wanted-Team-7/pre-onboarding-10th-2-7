@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import { SearchFormType } from '../types/search';
 
-function SearchForm() {
+function SearchForm({ setSearchResult }: SearchFormType) {
   return (
     <Form>
       <Image src={`${process.env.PUBLIC_URL}/assets/search.svg`} alt="search" />
