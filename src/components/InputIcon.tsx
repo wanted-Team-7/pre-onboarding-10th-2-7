@@ -2,10 +2,10 @@ import styled from 'styled-components';
 import SearchIcon from '../assets/search_icon.svg';
 import CloseIcon from '../assets/close_icon.svg';
 
-function InputIcon({ isInputFocused }: { boolean }) {
+function InputIcon() {
   return (
     <IconWrapper>
-      {isInputFocused && (
+      {true && (
         <CloseIconButton>
           <CloseIcon width={12} height={12} color="white" />
         </CloseIconButton>
