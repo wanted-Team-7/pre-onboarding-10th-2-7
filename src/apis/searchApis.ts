@@ -6,7 +6,8 @@ export const getSearchResults = async (SearchTerm: string) => {
       const response = await axios.get(`api/v1/search-conditions/?name=${SearchTerm}`);
       console.info('calling api');
       return response.data;
-    } else return [{ name: '데이터 없음', id: 0 }];
+    }
+    return undefined;
   } catch {
     alert('결과를 불러오는 중 에러가 발생했습니다.');
   }
