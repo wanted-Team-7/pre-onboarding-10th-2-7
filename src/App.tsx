@@ -1,29 +1,52 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import SearchForm from './components/SearchForm';
 import { useState } from 'react';
 import SearchResult from './components/SearchResult';
 import SearchIcon from '../assets/search_icon.svg';
+import { DEBOUNCE_TIMEOUT_SEC } from './constants/constant';
+import { ISearchData, getSearchData } from './apis/searchAPI';
 
 function App() {
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [searchData, setSearchData] = useState([]);
+  const [searchData, setSearchData] = useState<ISearchData[]>([]);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [elIndexFocused, setElIndexFocused] = useState(-1);
 
-  const formSumbitHandler = (e: React.FormEvent<HTMLFormElement>) => {};
-  const inputOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {};
+  const inputOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchKeyword(e.currentTarget.value);
+    setIsLoading(true);
+  };
   const inputOnFocusHandler = () => {};
   const inputOnBlurHandler = () => {};
   const inputOnKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {};
   const liMouseOverHandler = (e: React.MouseEvent<HTMLLIElement>) => {};
 
+  useEffect(() => {
+    const debounceTimeout = setTimeout(async () => {
+      try {
+        const data = await getSearchData(searchKeyword);
+        setSearchData(data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Fetch error! ', error);
+      }
+    }, DEBOUNCE_TIMEOUT_SEC * 1000);
+
+    return () => clearTimeout(debounceTimeout);
+  }, [searchKeyword]);
   return (
     <Main>
       <Title>원티드 프리온보딩 프론트엔드 인턴십(4월) 2주차 기업과제</Title>
 
-      <SearchForm />
+      <SearchForm
+        value={searchKeyword}
+        onChange={inputOnChangeHandler}
+        onFocus={inputOnFocusHandler}
+        onBlur={inputOnBlurHandler}
+        onKeyDown={inputOnKeyDownHandler}
+      />
 
       {isInputFocused && (
         <SearchResultsWrapper>

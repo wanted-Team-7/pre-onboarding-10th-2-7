@@ -1,10 +1,22 @@
+import React from 'react';
 import styled from 'styled-components';
 import InputIcon from './InputIcon';
 
-function SearchForm() {
+interface ISearchForm {
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onFocus: () => void;
+  onBlur: () => void;
+  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+}
+
+function SearchForm(props: ISearchForm) {
+  const formSumbitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
   return (
-    <Form>
-      <SearchInput type="text" placeholder="질환명을 입력해 주세요." />
+    <Form onSubmit={formSumbitHandler}>
+      <SearchInput type="text" placeholder="질환명을 입력해 주세요." {...props} />
       <InputIcon />
     </Form>
   );
