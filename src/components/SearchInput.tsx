@@ -1,28 +1,52 @@
+import React, { useEffect, useState } from 'react';
+import { getSearchResult } from '../api/baseApi';
 import {
   SearchInputArea,
   SearchInput,
   DeleteButton,
   SearchButton,
 } from '../style/SearchInput.styled';
+import { SetSearchResultFunc } from '../types/result';
 
-const SearchInputComponent = () => {
+const SearchInputComponent = ({ setSearchResult }: SetSearchResultFunc) => {
+  const [searchWord, setSearchWord] = useState<string>('');
+
+  const onChangeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchWord(e.target.value);
+  };
+
+  useEffect(() => {
+    if (searchWord.trim().length === 0) {
+      setSearchResult([]);
+      return;
+    }
+    getSearchResult(searchWord).then(result => setSearchResult(result));
+  }, [searchWord]);
+
   return (
     <SearchInputArea>
-      <SearchInput type="text" placeholder="질환명을 입력해 주세요." />
-      <DeleteButton>
-        <span>x</span>
-      </DeleteButton>
-      <SearchButton>
-        <span>검색버튼</span>
-        <svg
-          viewBox="0 0 16 16"
-          fill="#ffffff"
-          preserveAspectRatio="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M6.56 0a6.56 6.56 0 015.255 10.49L16 14.674 14.675 16l-4.186-4.184A6.56 6.56 0 116.561 0zm0 1.875a4.686 4.686 0 100 9.372 4.686 4.686 0 000-9.372z"></path>
-        </svg>
-      </SearchButton>
+      <form>
+        <SearchInput
+          type="text"
+          placeholder="질환명을 입력해 주세요."
+          value={searchWord}
+          onChange={onChangeInputHandler}
+        />
+        <DeleteButton type="button">
+          <span>x</span>
+        </DeleteButton>
+        <SearchButton type="submit">
+          <span>검색버튼</span>
+          <svg
+            viewBox="0 0 16 16"
+            fill="#ffffff"
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M6.56 0a6.56 6.56 0 015.255 10.49L16 14.674 14.675 16l-4.186-4.184A6.56 6.56 0 116.561 0zm0 1.875a4.686 4.686 0 100 9.372 4.686 4.686 0 000-9.372z"></path>
+          </svg>
+        </SearchButton>
+      </form>
     </SearchInputArea>
   );
 };
