@@ -2,19 +2,16 @@ import React, { useState, useEffect } from 'react';
 import useDebounce from '../hooks/useDebounce';
 import { getSearchResults } from '../apis/searchApis';
 import { ResultsType, SearchResultStoreType } from '../types/searchTypes';
+import useSearchInput from '../hooks/useSearchInput';
 
 export default function SearchSection() {
-  const [searchInput, setSearchInput] = useState('');
+  const { searchInput, handledSearchInput } = useSearchInput();
   const [searchResults, setSearchResults] = useState<ResultsType[]>([]);
   const [searchResultStore, setSearchResultStore] = useState<SearchResultStoreType[]>([
     { searchTerm: '', resultList: [] },
   ]);
 
   const searchTerm = useDebounce(searchInput, 500);
-
-  function handledSearchInput(event: React.ChangeEvent<HTMLInputElement>) {
-    setSearchInput(event.currentTarget.value);
-  }
 
   function addSearchResultStore(resultList: ResultsType[], searchTerm: string) {
     setSearchResultStore(prev => [...prev, { searchTerm, resultList }]);
