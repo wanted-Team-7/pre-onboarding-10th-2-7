@@ -4,14 +4,24 @@ import styled from 'styled-components';
 
 interface ISearchResult {
   index: number;
-  onMouseOver: (e: React.MouseEvent<HTMLLIElement>) => void;
   elIndexFocused: number;
+  name: string;
+  searchKeywordLength: number;
+  onMouseOver: (e: React.MouseEvent<HTMLLIElement>) => void;
 }
 
-function SearchResult({ index, onMouseOver, elIndexFocused }: ISearchResult) {
+function SearchResult({
+  index,
+  onMouseOver,
+  elIndexFocused,
+  name,
+  searchKeywordLength,
+}: ISearchResult) {
   return (
     <Li onMouseOver={onMouseOver} data-index={index} isFocus={[index, elIndexFocused]}>
       {/* <SearchIcon width={16} height={16} color="rgba(0, 0, 0, 0.5)" /> */}
+      <strong>{name.slice(0, searchKeywordLength)}</strong>
+      <span>{name.slice(searchKeywordLength)}</span>
     </Li>
   );
 }

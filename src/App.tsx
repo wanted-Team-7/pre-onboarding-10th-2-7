@@ -30,6 +30,7 @@ function App() {
     if (searchData.length === 0 || (e.code !== 'ArrowUp' && e.code !== 'ArrowDown')) return;
 
     e.preventDefault();
+
     if (e.code === 'ArrowUp') {
       if (elIndexFocused <= 0) {
         setElIndexFocused(searchData.length - 1);
@@ -47,8 +48,10 @@ function App() {
     }
   };
   const liMouseOverHandler = (e: React.MouseEvent<HTMLLIElement>) => {
-    // if (+e.currentTarget.dataset?.index === elIndexFocused) return;
-    // setElIndexFocused(+e.currentTarget?.dataset.index);
+    const { index } = e.currentTarget.dataset;
+    if (index === undefined) return;
+    if (+index === elIndexFocused) return;
+    setElIndexFocused(+index);
   };
 
   useEffect(() => {
@@ -65,7 +68,7 @@ function App() {
   }, [searchKeyword]);
   return (
     <Main>
-      <Title>원티드 프리온보딩 프론트엔드 인턴십(4월) 2주차 기업과제</Title>
+      <Title>2주차 기업과제</Title>
 
       <SearchForm
         value={searchKeyword}
@@ -101,6 +104,8 @@ function App() {
                   index={idx}
                   onMouseOver={liMouseOverHandler}
                   elIndexFocused={elIndexFocused}
+                  name={el.name}
+                  searchKeywordLength={searchKeyword.length}
                 />
               ))}
           </ul>
@@ -121,7 +126,7 @@ const Main = styled.main`
 
 const Title = styled.h1`
   font-size: 1.5em;
-  margin-bottom: 14px;
+  margin: 14px 0;
 `;
 
 const SearchResultsWrapper = styled.div`
