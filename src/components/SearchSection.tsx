@@ -4,21 +4,23 @@ import { getSearchResults } from '../apis/searchApis';
 import { ResultsType } from '../types/searchTypes';
 import useSearchInput from '../hooks/useSearchInput';
 import useSearchStore from '../hooks/useSearchStore';
+import SearchResults from './SearchResults';
 
 export default function SearchSection() {
   const { searchInput, handledSearchInput } = useSearchInput();
   const { searchResultStore, addSearchResultStore, deleteSearchResult } = useSearchStore();
+
   const [searchResults, setSearchResults] = useState<ResultsType[]>([]);
 
   const searchTerm = useDebounce(searchInput, 500);
+
+  useEffect(deleteSearchResult, [searchResultStore]);
 
   async function onSearchData() {
     const response = await getSearchResults(searchTerm);
     setSearchResults(response);
     addSearchResultStore(response, searchTerm);
   }
-
-  useEffect(deleteSearchResult, [searchResultStore]);
 
   useEffect(() => {
     if (searchTerm !== '') {
@@ -36,10 +38,7 @@ export default function SearchSection() {
     <div>
       <input type="text" value={searchInput} onChange={handledSearchInput} />
       <button>검색</button>
-      {searchResults &&
-        searchResults.map((result, index) => {
-          if (index < 7) return <div key={result.id}>{result.name}</div>;
-        })}
+      <SearchResults searchResults={searchResults} />
     </div>
   );
 }
