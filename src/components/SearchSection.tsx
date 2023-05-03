@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import useDebounce from '../hooks/useDebounce';
 import { getSearchResults } from '../apis/searchApis';
-import { ResultsType, SearchResultStoreType } from '../types/searchTypes';
+import { ResultsType } from '../types/searchTypes';
 import useSearchInput from '../hooks/useSearchInput';
+import useSearchStore from '../hooks/useSearchStore';
 
 export default function SearchSection() {
   const { searchInput, handledSearchInput } = useSearchInput();
+  const { searchResultStore, addSearchResultStore, deleteSearchResult } = useSearchStore();
   const [searchResults, setSearchResults] = useState<ResultsType[]>([]);
-  const [searchResultStore, setSearchResultStore] = useState<SearchResultStoreType[]>([
-    { searchTerm: '', resultList: [] },
-  ]);
 
   const searchTerm = useDebounce(searchInput, 500);
-
-  function addSearchResultStore(resultList: ResultsType[], searchTerm: string) {
-    setSearchResultStore(prev => [...prev, { searchTerm, resultList }]);
-  }
 
   async function onSearchData() {
     const response = await getSearchResults(searchTerm);
@@ -23,17 +18,7 @@ export default function SearchSection() {
     addSearchResultStore(response, searchTerm);
   }
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      let copySearchResultStore = [...searchResultStore];
-      copySearchResultStore.shift();
-      setSearchResultStore([...copySearchResultStore]);
-    }, 5000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [searchResultStore]);
+  useEffect(deleteSearchResult, [searchResultStore]);
 
   useEffect(() => {
     if (searchTerm !== '') {
