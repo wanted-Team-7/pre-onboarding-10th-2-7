@@ -5,6 +5,7 @@ import DropdownList from '../components/DropdownList';
 import Title from '../components/Title';
 import { getServerData } from '../apis/getServerData';
 import { DataItem } from '../types/searchData';
+import useDebounce from '../hooks/useDebounce';
 
 export default function SearchPage() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -20,6 +21,8 @@ export default function SearchPage() {
     setIsOpen(false);
   };
 
+  const debouncedSearchText = useDebounce(inputValue, 200);
+
   const isNoData = serverDataList.length === 0;
 
   useEffect(() => {
@@ -28,7 +31,7 @@ export default function SearchPage() {
 
       let serverData;
       try {
-        serverData = await getServerData({ name: inputValue }, { isCached: true });
+        serverData = await getServerData({ name: debouncedSearchText }, { isCached: true });
       } catch (error) {
         console.log(error);
       }
@@ -37,7 +40,7 @@ export default function SearchPage() {
 
       setServerDataList(serverData);
     })();
-  }, [inputValue]);
+  }, [debouncedSearchText]);
 
   return (
     <Container onClick={dropdownCloseHandler}>
