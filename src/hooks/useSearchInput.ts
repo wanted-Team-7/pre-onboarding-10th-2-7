@@ -7,5 +7,9 @@ export default function useSearchInput() {
     setSearchInput(event.currentTarget.value);
   }
 
-  return { searchInput, handledSearchInput };
+  function handledSearchInputClear() {
+    setSearchInput('');
+  }
+
+  return { searchInput, handledSearchInput, handledSearchInputClear };
 }
