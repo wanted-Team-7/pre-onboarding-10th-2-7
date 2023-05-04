@@ -73,7 +73,13 @@ export default function SearchSection({
           </svg>
         </Style.SearchButton>
       </Style.SearchBar>
-      {isVisibleSearchResults && <SearchResults searchResults={searchResults} />}
+      {isVisibleSearchResults && (
+        <SearchResults
+          searchResults={searchResults}
+          searchInput={searchInput}
+          searchTerm={searchTerm}
+        />
+      )}
     </Style.Container>
   );
 }
