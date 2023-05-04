@@ -50,7 +50,12 @@ export default useDebounce;
 **2. 키 이벤트 (UX)**
 
 `handleKeyDown` 함수를 이용하여 키보드로 추천 검색어 검색 가능  
-**ArrowUp**, **ArrowDown**으로 이동하고 **enter**로 해당 추천 검색어 검색, **esc**로 종료
+**ArrowUp**, **ArrowDown**으로 이동하고 **enter**로 해당 추천 검색어 검색, **esc**로 종료  
+추천 검색어 검색시 배열 인덱싱을 비교하여 현재 focusing 되고 있는 검색어를 검색하도록 구현
+
+**why?**  
+질병 정보의 id를 이용하지 않고 배열 인덱싱을 통해 추천 검색어 검색 기능을 넣은 이유  
+해당 서비스를 사용하는 사용자가 개입하여 정보를 수정하거나 삭제항 가능성이 매우 적기 때문에 배열 인덱싱으로 처리해도 충분하다고 판단
 
 ```ts
 const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -86,8 +91,11 @@ const handleKeyDown = (event: React.KeyboardEvent) => {
 **3. 캐싱**
 
 `useCache` 커스텀 훅을 이용하여 캐싱 처리, api 호출 시 결과값을 캐싱  
-만약 expiretime 내에 존재하는 데이터라면 새로 api를 호출 하지 않고 기존 캐싱된 값 출력  
-expiretime이 벗어나서 삭제된 데이터라면 api 호출하고 결과값 캐싱  
+
+`addCache`에서 새롭게 캐시 될 값을 받아와서 **newCache**에 넣어준 다음 기존 cache state에 추가  
+setTimeout을 통해 expiretime이 지나면 추가된 cache 삭제  
+
+`getCache`에서 해당 key의 캐싱된 정보를 불러옴  
 빠른 결과 확인을 위해 expiretime을 1분으로 고정  
 
 ```ts
@@ -117,4 +125,24 @@ export const useCache = () => {
 };
 
 export default useCache;
+```
+
+**4. useCache 적용**  
+만약 expiretime 내에 존재하는 데이터라면 새로 api를 호출 하지 않고 기존 캐싱된 값 출력  
+expiretime이 벗어나서 삭제된 데이터라면 api 호출하고 결과값 캐싱  
+
+```ts
+const handleFetchSearchResult = async () => {
+  // another code
+  const data = getCache(search);
+  if (data !== null) {
+    setSearchResult(data);
+    setIndex(-1);
+    return;
+  }
+  const { data: result } = await searchApi(debouncedSearch);
+  addCache(search, result);
+  setSearchResult(result);
+  setIndex(-1);
+};
 ```
