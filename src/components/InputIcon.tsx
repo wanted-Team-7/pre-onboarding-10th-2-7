@@ -1,17 +1,17 @@
 import styled from 'styled-components';
-// import SearchIcon from '../assets/search_icon.svg';
-// import CloseIcon from '../assets/close_icon.svg';
+import { ReactComponent as SearchIcon } from '../assets/search_icon.svg';
+import { ReactComponent as CloseIcon } from '../assets/close_icon.svg';
 
 function InputIcon() {
   return (
     <IconWrapper>
       {true && (
         <CloseIconButton>
-          {/* <CloseIcon width={12} height={12} color="white" /> */}
+          <CloseIcon width={12} height={12} color="white" />
         </CloseIconButton>
       )}
       <SearchIconButton>
-        {/* <SearchIcon width={16} height={16} color="white" /> */}
+        <SearchIcon width={16} height={16} color="white" />
       </SearchIconButton>
     </IconWrapper>
   );

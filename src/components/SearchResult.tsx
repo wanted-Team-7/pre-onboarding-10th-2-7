@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-// import SearchIcon from '../assets/search_icon.svg';
+import { ReactComponent as SearchIcon } from '../assets/search_icon.svg';
 
 interface ISearchResult {
   index: number;
@@ -19,7 +19,7 @@ function SearchResult({
 }: ISearchResult) {
   return (
     <Li onMouseOver={onMouseOver} data-index={index} isFocus={[index, elIndexFocused]}>
-      {/* <SearchIcon width={16} height={16} color="rgba(0, 0, 0, 0.5)" /> */}
+      <SearchIcon width={16} height={16} color="rgba(0, 0, 0, 0.5)" />
       <strong>{name.slice(0, searchKeywordLength)}</strong>
       <span>{name.slice(searchKeywordLength)}</span>
     </Li>

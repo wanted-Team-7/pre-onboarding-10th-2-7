@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import SearchForm from './components/SearchForm';
 import SearchResult from './components/SearchResult';
-// import SearchIcon from './assets/search_icon.svg';
+import { ReactComponent as SearchIcon } from './assets/search_icon.svg';
 import { DEBOUNCE_TIMEOUT_SEC } from './constants/constant';
-// import { ISearchData, getSearchData } from './apis/searchAPI';
 import { ISearchData, getSearchData } from './apis/searchApi';
 
 function App() {
@@ -91,7 +90,7 @@ function App() {
               (searchKeyword !== '' && (
                 <>
                   <SearchResultKeyword>
-                    {/* <SearchIcon width={16} height={16} color="rgba(0, 0, 0, 0.5)" /> */}
+                    <SearchIcon width={16} height={16} color="rgba(0, 0, 0, 0.5)" />
                     <strong>{searchKeyword}</strong>
                   </SearchResultKeyword>
                 </>

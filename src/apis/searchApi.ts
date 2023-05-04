@@ -19,7 +19,7 @@ const caching = (key: string, data: ISearchData[]) => {
 
 export const getSearchData = async (keyword: string) => {
   if (keyword.trim() === '') return []; // 빈 키워드 값은 api 호출 제외
-  if (cache[keyword]) return cache[keyword]; // 캐싱
+  if (cache[keyword]) return cache[keyword];
 
   try {
     const res = await axios.get<ISearchData[]>(`/api/v1/search-conditions/?name=${keyword}`);
