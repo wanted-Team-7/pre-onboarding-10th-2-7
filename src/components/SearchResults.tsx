@@ -5,9 +5,15 @@ type ResultsTypes = {
   searchResults: ResultsType[];
   searchInput: string;
   searchTerm: string;
+  focusIndex: number;
 };
 
-export default function SearchResults({ searchResults, searchInput, searchTerm }: ResultsTypes) {
+export default function SearchResults({
+  searchResults,
+  searchInput,
+  searchTerm,
+  focusIndex,
+}: ResultsTypes) {
   return (
     <Style.Container>
       {searchTerm !== searchInput ? (
@@ -15,7 +21,7 @@ export default function SearchResults({ searchResults, searchInput, searchTerm }
       ) : (
         <>
           {searchInput && (
-            <Style.SearchTerm>
+            <Style.SearchTerm focus={false}>
               <svg
                 viewBox="0 0 16 16"
                 fill="currentColor"
@@ -35,7 +41,7 @@ export default function SearchResults({ searchResults, searchInput, searchTerm }
               {searchResults.map((result, index) => {
                 if (index < 7)
                   return (
-                    <Style.SearchTerm key={result.id}>
+                    <Style.SearchTerm key={result.id} focus={focusIndex === index}>
                       <svg
                         viewBox="0 0 16 16"
                         fill="currentColor"
@@ -76,13 +82,15 @@ const Style = {
     }
   `,
 
-  SearchTerm: styled.div`
+  SearchTerm: styled.div<{ focus: boolean }>`
     display: flex;
     align-items: center;
     width: 100%;
     height: 40px;
     padding: 0 20px;
     font-size: 15px;
+    background-color: ${({ focus }) => (focus ? '#f8f8f8' : 'transparent')};
+
     :hover {
       background-color: #f8f8f8;
       cursor: pointer;

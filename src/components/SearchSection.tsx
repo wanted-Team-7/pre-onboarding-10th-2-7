@@ -19,6 +19,7 @@ export default function SearchSection({
   const { searchInput, handledSearchInput, handledSearchInputClear } = useSearchInput();
   const { searchResultStore, addSearchResultStore, deleteSearchResult } = useSearchStore();
   const [searchResults, setSearchResults] = useState<ResultsType[]>([]);
+  const [focusIndex, setFocusIndex] = useState(-1);
 
   const searchTerm = useDebounce(searchInput, 500);
 
@@ -42,6 +43,22 @@ export default function SearchSection({
     } else setSearchResults([]);
   }, [searchTerm]);
 
+  function changeIndexNumber(event: React.KeyboardEvent<HTMLInputElement>) {
+    console.log(event.key);
+    if (event.key === 'ArrowDown') {
+      searchResults.length > 0 && searchResults.length < 7
+        ? setFocusIndex(prev => (prev + 1) % searchResults.length)
+        : setFocusIndex(prev => (prev + 1) % 7);
+    }
+    if (event.key === 'ArrowUp') {
+      searchResults.length > 0 && searchResults.length < 7
+        ? setFocusIndex(prev => (prev - 1 + searchResults.length) % searchResults.length)
+        : setFocusIndex(prev => (prev - 1 + 7) % 7);
+    }
+    if (event.key === 'Backspace' || searchInput === '') {
+      setFocusIndex(-1);
+    }
+  }
   return (
     <Style.Container>
       <Style.SearchBar isVisibleSearchResults={isVisibleSearchResults}>
@@ -62,6 +79,7 @@ export default function SearchSection({
             value={searchInput}
             onChange={handledSearchInput}
             onClick={() => setIsVisibleSearchResults(true)}
+            onKeyDown={changeIndexNumber}
             placeholder="질환명을 입력해주세요."
           />
           {searchInput && (
@@ -95,6 +113,7 @@ export default function SearchSection({
             searchResults={searchResults}
             searchInput={searchInput}
             searchTerm={searchTerm}
+            focusIndex={focusIndex}
           />
         ))}
     </Style.Container>
