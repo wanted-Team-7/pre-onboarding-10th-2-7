@@ -55,7 +55,7 @@ export default function SearchPage() {
       if (serverData === null) return;
 
       setSelectedIndex(-1);
-      setServerDataList(serverData);
+      setServerDataList(serverData.slice(0, 9));
     })();
   }, [debouncedSearchText]);
 
@@ -108,6 +108,7 @@ const DropdownContainer = styled.ul`
   background-color: white;
   border-radius: 20px;
   margin-top: 8px;
+  padding-bottom: 10px;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 
   #recommendKeywordLabel {
