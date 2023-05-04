@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import React from 'react';
 import { S } from './inputBoxstyled';
 import { ReactComponent as Magnifier } from '../../assets/magnifier.svg';
 import { ReactComponent as Delete } from '../../assets/delete.svg';
 import { getSearchWord } from '../../api/client';
 import { useDebounce } from '../../hooks/useDebounce';
+import { handleExpireCache } from '../../util/expireCache';
+import { SEARCH_LIST_MAX_LENGTH, DEBOUNCE_TIME } from '../../constants';
 
 interface Props {
   setSearchList: React.Dispatch<React.SetStateAction<[]>>;
@@ -25,8 +27,9 @@ const InputBox = ({
   handleKeyboard,
   setCurrentIndex,
 }: Props) => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState<string>('');
-  const debounceValue: string = useDebounce(inputValue, 300);
+  const debounceValue: string = useDebounce(inputValue, DEBOUNCE_TIME);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.length !== 0) {
       setIsInputValue(true);
@@ -38,31 +41,25 @@ const InputBox = ({
     setInputValue(e.target.value);
   };
 
-  // const checkCacheExpire = () => {
-  //   setInterval(() => {
-  //     // 만료시간 지난 캐시 삭제
-  //     console.log('expire');
-  //     for (let elem in localStorage) {
-  //       const test = localStorage.getItem(elem);
-  //       const localStorageElem: StorageItem = JSON.parse(test!);
-  //       if (localStorageElem?.expireTime && localStorageElem?.expireTime <= Date.now()) {
-  //         localStorage.removeItem(elem);
-  //       }
-  //     }
-  //   }, 4000);
-  // };
-
-  // useEffect(() => {
-  //   checkCacheExpire();
-  // }, []);
-
   useEffect(() => {
     const getSearchWordList = async () => {
       const result = await getSearchWord(debounceValue);
-      setSearchList(result.length <= 7 ? result : result.slice(0, 7));
+      setSearchList(
+        result.length <= SEARCH_LIST_MAX_LENGTH ? result : result.slice(0, SEARCH_LIST_MAX_LENGTH)
+      );
     };
     getSearchWordList();
   }, [debounceValue]);
+
+  useEffect(() => {
+    handleExpireCache();
+  }, []);
+
+  // const onClickDeleteBtn = () => {
+  //   console.log(inputRef);
+  //   setInputValue('');
+  //   inputRef.current?.focus();
+  // };
 
   return (
     <S.Container>
@@ -75,6 +72,7 @@ const InputBox = ({
         ) : null}
         <S.Focus>
           <input
+            ref={inputRef}
             value={inputValue}
             onChange={handleChange}
             onFocus={() => setIsFocus(true)}
@@ -85,7 +83,7 @@ const InputBox = ({
             onKeyDown={handleKeyboard}
           />
           {isFocus ? (
-            <span>
+            <span onClick={() => console.log('hello')}>
               <Delete width={16} height={16} />
             </span>
           ) : null}
