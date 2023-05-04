@@ -27,6 +27,7 @@ function App() {
   };
   const inputOnKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.nativeEvent.isComposing) return;
+
     if (searchData.length === 0 || (e.code !== 'ArrowUp' && e.code !== 'ArrowDown')) return;
     e.preventDefault();
 
