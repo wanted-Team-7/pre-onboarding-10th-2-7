@@ -5,6 +5,14 @@ const Container = styled.div`
   height: 100vh;
   background-color: #cae9ff;
   display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 150px 0px;
+`;
+
+const Wrapper = styled.div`
+  width: 500px;
+  display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -22,4 +30,5 @@ const Title = styled.h2`
 export const S = {
   Container,
   Title,
+  Wrapper,
 };
