@@ -1,19 +1,12 @@
 import styled from 'styled-components';
-import { ResultsType } from '../types/searchTypes';
-
-type ResultsTypes = {
-  searchResults: ResultsType[];
-  searchInput: string;
-  searchTerm: string;
-  focusIndex: number;
-};
+import { SearchResultsPropType } from '../types/searchTypes';
 
 export default function SearchResults({
   searchResults,
   searchInput,
   searchTerm,
   focusIndex,
-}: ResultsTypes) {
+}: SearchResultsPropType) {
   return (
     <Style.Container>
       {searchTerm !== searchInput ? (

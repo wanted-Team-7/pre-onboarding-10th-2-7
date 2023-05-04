@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import useDebounce from '../hooks/useDebounce';
 import { getSearchResults } from '../apis/searchApis';
-import { ResultsType } from '../types/searchTypes';
+import { ResultsType, SearchSectionType } from '../types/searchTypes';
 import useSearchInput from '../hooks/useSearchInput';
 import useCache from '../hooks/useCache';
 import useMakeFocusIndex from '../hooks/useMakeFocusIndex';
@@ -9,10 +9,6 @@ import SearchResults from './SearchResults';
 import RecentSearchTerms from './RecentSearchTerms';
 import styled from 'styled-components';
 
-type SearchSectionType = {
-  isVisibleSearchResults: boolean;
-  setIsVisibleSearchResults: (isVisibleSearchResults: boolean) => void;
-};
 export default function SearchSection({
   isVisibleSearchResults,
   setIsVisibleSearchResults,
