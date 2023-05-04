@@ -18,13 +18,12 @@ const SearchedList = ({
   selectedItemIndex,
 }: SearchedListProps) => {
   const isSearchEmpty = searchQuery.trim() === '';
-  const recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
 
   return (
     <StyledLayout>
       <StyledUl>
         {isSearchEmpty ? (
-          <RecentSearches searchQuery={searchQuery} recentSearches={recentSearches} />
+          <RecentSearches searchQuery={searchQuery} />
         ) : (
           <>
             <SearchItem searchQuery={searchQuery} />

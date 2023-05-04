@@ -4,16 +4,20 @@ import { StyledText } from './SearchedList';
 
 interface RecentSearchesProps {
   searchQuery: string;
-  recentSearches: string[];
 }
 
-const RecentSearches = ({ searchQuery, recentSearches }: RecentSearchesProps) => {
+const RecentSearches = ({ searchQuery }: RecentSearchesProps) => {
+  const recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+
   return (
     <>
       <StyledText>최근 검색어</StyledText>
-      {recentSearches.slice(0, MAX_SEARCHED_RESULT_NUM).map((item: string, index: number) => (
-        <SearchedItem key={index} id={index} name={item} searchQuery={searchQuery} />
-      ))}
+      {recentSearches
+        .reverse()
+        .slice(0, MAX_SEARCHED_RESULT_NUM)
+        .map((item: string, index: number) => (
+          <SearchedItem key={index} id={index} name={item} searchQuery={searchQuery} />
+        ))}
     </>
   );
 };
