@@ -17,9 +17,9 @@ const App = () => {
   const [searchedResponse, setSearchedResponse] = useState<SearchedResponseItem[]>([]);
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [selectedItemIndex, setSelectedItemIndex] = useState<number>(-1);
   const debouncedSearchTerm = useDebounce(searchQuery, 300);
   const { addItem, getItem } = useExpirationCache();
-  const [selectedItemIndex, setSelectedItemIndex] = useState<number>(-1);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowUp') {
@@ -31,6 +31,14 @@ const App = () => {
       setSelectedItemIndex(prevIndex =>
         Math.min(prevIndex + 1, searchedResponse.length - 1, MAX_SEARCHED_RESULT_NUM - 1)
       );
+    }
+    if (e.key === 'Enter' && selectedItemIndex >= 0) {
+      e.preventDefault();
+      const selectedItem = searchedResponse[selectedItemIndex];
+      if (selectedItem) {
+        setSearchQuery(selectedItem.name);
+        handleSearch(selectedItem.name);
+      }
     }
   };
 
@@ -59,18 +67,20 @@ const App = () => {
   };
 
   const handleSearch = async (searchQuery: string) => {
-    const isCached = checkCacheAndSetResponse(searchQuery);
+    if (searchQuery.trim() !== '') {
+      const isCached = checkCacheAndSetResponse(searchQuery);
 
-    if (!isCached) {
-      setIsSearching(true);
-      const response = await API.search({ name: searchQuery });
-      setSearchedResponse(response.data);
-      setIsSearching(false);
-      addItem(searchQuery, response.data, ONE_HOUR);
+      if (!isCached) {
+        setIsSearching(true);
+        const response = await API.search({ name: searchQuery });
+        setSearchedResponse(response.data);
+        setIsSearching(false);
+        addItem(searchQuery, response.data, ONE_HOUR);
+      }
     }
   };
 
-  const getSearchData = async (e: React.FormEvent<HTMLFormElement>) => {
+  const getSearchData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     await handleSearch(searchQuery);
 
