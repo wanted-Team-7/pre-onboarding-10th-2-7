@@ -5,6 +5,7 @@ import { ResultsType } from '../types/searchTypes';
 import useSearchInput from '../hooks/useSearchInput';
 import useSearchStore from '../hooks/useSearchStore';
 import SearchResults from './SearchResults';
+import RecentSearchTerms from './RecentSearchTerms';
 import styled from 'styled-components';
 
 type SearchSectionType = {
@@ -38,7 +39,7 @@ export default function SearchSection({
       if (storeSearchList) {
         setSearchResults(storeSearchList);
       } else onSearchData();
-    } else setSearchResults([{ name: '검색어 없음', id: 0 }]);
+    } else setSearchResults([]);
   }, [searchTerm]);
 
   return (
@@ -86,13 +87,16 @@ export default function SearchSection({
           </svg>
         </Style.SearchButton>
       </Style.SearchBar>
-      {isVisibleSearchResults && (
-        <SearchResults
-          searchResults={searchResults}
-          searchInput={searchInput}
-          searchTerm={searchTerm}
-        />
-      )}
+      {isVisibleSearchResults &&
+        (searchInput === '' ? (
+          <RecentSearchTerms />
+        ) : (
+          <SearchResults
+            searchResults={searchResults}
+            searchInput={searchInput}
+            searchTerm={searchTerm}
+          />
+        ))}
     </Style.Container>
   );
 }
