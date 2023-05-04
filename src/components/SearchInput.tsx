@@ -20,7 +20,13 @@ const SearchInputComponent = ({ setSearchResult }: SetSearchResultFunc) => {
       setSearchResult([]);
       return;
     }
-    getSearchResult(searchWord).then(result => setSearchResult(result));
+
+    const timer = setTimeout(() => {
+      console.log('typing...');
+      getSearchResult(searchWord).then(result => setSearchResult(result));
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, [searchWord]);
 
   return (
