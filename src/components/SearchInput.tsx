@@ -1,13 +1,15 @@
 import styled from 'styled-components';
-import { ChangeEventHandler, MouseEventHandler } from 'react';
+import { ChangeEventHandler, KeyboardEventHandler, MouseEventHandler } from 'react';
 import { SearchButtonIcon } from '../icons/SearchButtonIcon';
 
 export default function SearchInput({
   onChange,
   onClick,
+  onKeyUp,
 }: {
   onChange: ChangeEventHandler<HTMLInputElement>;
   onClick: MouseEventHandler;
+  onKeyUp: KeyboardEventHandler;
 }) {
   return (
     <InputContainer>
@@ -16,6 +18,7 @@ export default function SearchInput({
         placeholder="질환명을 입력해 주세요."
         onChange={onChange}
         onClick={onClick}
+        onKeyUp={onKeyUp}
       />
       <ButtonContainer>
         <SearchButtonIcon />

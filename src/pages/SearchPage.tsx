@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, KeyboardEvent } from 'react';
 import styled from 'styled-components';
 import SearchInput from '../components/SearchInput';
 import DropdownList from '../components/DropdownList';
@@ -11,6 +11,7 @@ export default function SearchPage() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>('');
   const [serverDataList, setServerDataList] = useState<DataItem[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
   const debouncedSearchText = useDebounce(inputValue, 200);
   const isNoData = serverDataList.length === 0;
@@ -22,10 +23,26 @@ export default function SearchPage() {
 
   const dropdownCloseHandler = () => {
     setIsOpen(false);
+    setSelectedIndex(-1);
+  };
+
+  const onKeyUpHandler = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (inputValue === '') return;
+
+    const lastIndex = serverDataList.length - 1;
+
+    if (e.key === 'ArrowUp') {
+      selectedIndex === -1 ? setSelectedIndex(lastIndex) : setSelectedIndex(selectedIndex - 1);
+    }
+
+    if (e.key === 'ArrowDown') {
+      selectedIndex === lastIndex ? setSelectedIndex(-1) : setSelectedIndex(selectedIndex + 1);
+    }
   };
 
   useEffect(() => {
     (async () => {
+      // TODO: trim() 가독성 개선하기
       if (inputValue === null || inputValue.trim() === '') return;
 
       let serverData;
@@ -37,6 +54,7 @@ export default function SearchPage() {
 
       if (serverData === null) return;
 
+      setSelectedIndex(-1);
       setServerDataList(serverData);
     })();
   }, [debouncedSearchText]);
@@ -45,13 +63,22 @@ export default function SearchPage() {
     <Container onClick={dropdownCloseHandler}>
       <ContentWrapper>
         <Title />
-        <SearchInput onChange={e => setInputValue(e.target.value)} onClick={inputOnClickHandler} />
+        <SearchInput
+          onChange={e => setInputValue(e.target.value)}
+          onClick={inputOnClickHandler}
+          onKeyUp={onKeyUpHandler}
+        />
         {isOpen && (
           <DropdownContainer>
             <li id="recommendKeywordLabel">추천 검색어</li>
             {isNoData && <li id="noDataLabel">추천 검색어 없음</li>}
-            {serverDataList.map(data => (
-              <DropdownList keyword={data.name} key={data.id} />
+            {serverDataList.map((data, dataIndex) => (
+              <DropdownList
+                keyword={data.name}
+                key={data.id}
+                selectedIndex={selectedIndex}
+                dataIndex={dataIndex}
+              />
             ))}
           </DropdownContainer>
         )}
@@ -81,16 +108,15 @@ const DropdownContainer = styled.ul`
   background-color: white;
   border-radius: 20px;
   margin-top: 8px;
-  padding: 24px 16px;
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 
   #recommendKeywordLabel {
-    padding: 8px 12px;
+    padding: 32px 12px 20px 25px;
     color: #6a737b;
     font-size: 13px;
   }
 
   #noDataLabel {
-    padding: 8px 12px;
+    padding: 8px 12px 25px 25px;
   }
 `;
