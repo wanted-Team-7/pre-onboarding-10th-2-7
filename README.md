@@ -1,70 +1,190 @@
-# Getting Started with Create React App
+# 이지윤
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 폴더 구조
+```
+📦src
+ ┣ 📂API
+ ┃ ┣ 📜API.ts
+ ┃ ┗ 📜customAPI.ts
+ ┣ 📂assets
+ ┃ ┗ 📜SearchSVG.tsx
+ ┣ 📂components
+ ┃ ┣ 📜SearchBar.tsx
+ ┃ ┣ 📜SearchedItem.tsx
+ ┃ ┗ 📜SearchedList.tsx
+ ┣ 📂fonts
+ ┃ ┣ 📜FontStyles.js
+ ┃ ┣ 📜NanumSquareNeo.ttf
+ ┃ ┣ 📜NanumSquareNeo.woff
+ ┃ ┗ 📜NanumSquareNeo.woff2
+ ┣ 📂hooks
+ ┃ ┣ 📜useDebounce.tsx
+ ┃ ┣ 📜useExpirationCache.tsx
+ ┃ ┗ 📜useSearch.tsx
+ ┣ 📂utils
+ ┃ ┗ 📜constants.ts
+ ┣ 📂views
+ ┃ ┣ 📜RecentSearches.tsx
+ ┃ ┣ 📜RecommendedSearches.tsx
+ ┃ ┣ 📜SearchInputPlaceholder.tsx
+ ┃ ┗ 📜SearchItem.tsx
+ ┣ 📜App.tsx
+ ┣ 📜index.tsx
+ ┗ 📜setupProxy.js
+ ```
 
-## Available Scripts
 
-In the project directory, you can run:
+ ## Hooks
 
-### `npm start`
+ ### useDebounce
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+ ```ts
+ import { useState, useEffect } from 'react';
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
-### `npm test`
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
 
-### `npm run build`
+  return debouncedValue;
+}
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+export default useDebounce;
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+ ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+ ### useExpirationCache
+ ```ts
+ import { useState } from 'react';
 
-### `npm run eject`
+interface CacheItem {
+  key: string;
+  value: any;
+  expirationTime: number;
+}
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+const useExpirationCache = (initialCache: CacheItem[] = []) => {
+  const [cache, setCache] = useState<CacheItem[]>(initialCache);
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  const addItem = (key: string, value: any, expirationTime: number) => {
+    const newItem: CacheItem = { key, value, expirationTime: Date.now() + expirationTime };
+    setCache(prevCache => [...prevCache, newItem]);
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+    setTimeout(() => {
+      setCache(prevCache => prevCache.filter(c => c !== newItem));
+    }, expirationTime);
+  };
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+  const getItem = (key: string) => {
+    const foundItem = cache.find(c => c.key === key);
+    return foundItem ? foundItem.value : null;
+  };
 
-## Learn More
+  return { addItem, getItem };
+};
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+export default useExpirationCache;
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### useSearch
+```ts
+import React, { useState, useEffect } from 'react';
+import API from '../API/API';
+import useDebounce from './useDebounce';
+import useExpirationCache from './useExpirationCache';
+import { SearchedResponseItem } from '../App';
+import { ONE_HOUR } from '../utils/constants';
 
-### Code Splitting
+interface UseSearchProps {
+  searchQuery: string;
+  debounceDelay: number;
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+const useSearch = ({ searchQuery, debounceDelay }: UseSearchProps) => {
+  const [searchedResponse, setSearchedResponse] = useState<SearchedResponseItem[]>([]);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const debouncedSearchTerm = useDebounce(searchQuery, debounceDelay);
+  const { addItem, getItem } = useExpirationCache();
 
-### Analyzing the Bundle Size
+  const checkCacheAndSetResponse = (searchQuery: string) => {
+    const cachedValue = getItem(searchQuery);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+    if (cachedValue) {
+      setSearchedResponse(cachedValue);
+      setIsSearching(false);
+      return true;
+    }
+    return false;
+  };
 
-### Making a Progressive Web App
+  const handleSearch = async (searchQuery: string) => {
+    if (searchQuery.trim() !== '') {
+      const isCached = checkCacheAndSetResponse(searchQuery);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+      if (!isCached) {
+        setIsSearching(true);
+        const response = await API.search({ name: searchQuery });
+        setSearchedResponse(response.data);
+        setIsSearching(false);
+        addItem(searchQuery, response.data, ONE_HOUR);
+      }
+    }
+  };
 
-### Advanced Configuration
+  const getSearchData = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    await handleSearch(searchQuery);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+    const recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+    recentSearches.push(searchQuery);
+    localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
 
-### Deployment
+    addItem(searchQuery, searchedResponse, ONE_HOUR);
+  };
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+  useEffect(() => {
+    const isNotEmpty = debouncedSearchTerm.trim() !== '';
 
-### `npm run build` fails to minify
+    isNotEmpty && handleSearch(debouncedSearchTerm);
+    // FIXME
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearchTerm]);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+  return {
+    searchedResponse,
+    isSearching,
+    handleSearch,
+    getSearchData,
+  };
+};
+
+export default useSearch;
+
+```
+
+
+## 기능 요약
+1. 검색 UX
+    - 검색창 포커스 인 
+        - 인풋값 있을 때 -> 추천 검색 리스트
+        - 인풋값 없을 때 -> 최근 검색 리스트
+
+    - 검색창 포커스 아웃 -> 검색 리스트 숨김
+    - 검색결과와 인풋값이 동일한 부분 빨간색으로 색상 변경
+    - 키를 이용해서 추천 검색어 이동가능
+        - 엔터키 누르면 인풋값으로 들어감
+
+2. API호출 최소화
+    - 디바운스 -> 0.5초마다 입력이 종료되면 호출
+    - 캐싱
+        - API호출 할 때마다 결과값 캐싱
+        - 같은 검색어 입력시 캐싱된 결과 반환
+        - 1시간뒤에 순서대로 만료
