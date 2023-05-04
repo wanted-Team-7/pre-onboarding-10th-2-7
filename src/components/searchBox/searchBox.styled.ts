@@ -35,9 +35,6 @@ const Element = styled.li<{ isSelected: boolean }>`
   margin-bottom: 15px;
   padding: 10px 0px;
 
-  &:hover {
-    background-color: #dfdfdf;
-  }
   p {
     margin-left: 15px;
   }
