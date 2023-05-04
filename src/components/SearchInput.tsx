@@ -16,13 +16,7 @@ const SearchInputComponent = ({ setSearchResult }: SetSearchResultFunc) => {
   };
 
   useEffect(() => {
-    if (searchWord.trim().length === 0) {
-      setSearchResult([]);
-      return;
-    }
-
     const timer = setTimeout(() => {
-      console.log('typing...');
       getSearchResult(searchWord).then(result => setSearchResult(result));
     }, 500);
 
