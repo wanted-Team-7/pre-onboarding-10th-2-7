@@ -2,11 +2,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 
-const APIbaseURL = '/api/v1/';
+const API_BASE_URL =
+  process.env.NODE_ENV === 'production'
+    ? process.env.REACT_APP_API_BASE_URL_PROD
+    : process.env.REACT_APP_API_BASE_URL_DEV;
 
 const axiosApi = ({ options }: any) => {
   const instance = axios.create({
-    baseURL: APIbaseURL,
+    baseURL: API_BASE_URL,
     ...options,
   });
 
@@ -36,4 +39,4 @@ const axiosApi = ({ options }: any) => {
   return instance;
 };
 
-export const defaultInstance = axiosApi(APIbaseURL);
+export const defaultInstance = axiosApi(API_BASE_URL);
