@@ -1,16 +1,24 @@
 import { S } from './searchBox.styled';
-import { SearchElement } from '../../type';
 
-const SearchBox = ({ searchList }: { searchList: SearchElement[] }) => {
-  const list = searchList.length > 7 ? searchList.slice(0, 7) : searchList;
+interface SearchElement {
+  name: string;
+  id: number;
+}
+
+interface Props {
+  searchList: SearchElement[];
+  currentIndex: number;
+}
+
+const SearchBox = ({ searchList, currentIndex }: Props) => {
   return (
     <S.Container>
       <ul>
-        {list.length === 0 ? (
+        {searchList.length === 0 ? (
           <div>검색어 없음</div>
         ) : (
-          list.map(e => (
-            <S.Element>
+          searchList.map((e: SearchElement, idx: number) => (
+            <S.Element key={e.id} isSelected={idx === currentIndex}>
               <S.SVG width={16} height={16} />
               <p>{e.name}</p>
             </S.Element>

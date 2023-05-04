@@ -25,9 +25,10 @@ const Container = styled.div`
   }
 `;
 
-const Element = styled.li`
+const Element = styled.li<{ isSelected: boolean }>`
   width: 100%;
   display: flex;
+  background-color: ${props => (props.isSelected ? '#dfdfdf' : '#ffffff')};
   flex-direction: row;
   align-items: center;
   justify-content: start;
