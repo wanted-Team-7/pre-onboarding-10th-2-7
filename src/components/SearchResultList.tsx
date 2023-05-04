@@ -1,9 +1,14 @@
 import { SearchList } from '../style/SearchResultList.styled';
 import { SearchResults } from '../types/result';
 
-const SearchResultList = ({ result }: { result: SearchResults }) => {
+interface SearchResultListType {
+  result: SearchResults;
+  isFocus: boolean;
+}
+
+const SearchResultList = ({ result, isFocus }: SearchResultListType) => {
   return (
-    <SearchList>
+    <SearchList isFocus={isFocus}>
       <svg
         viewBox="0 0 16 16"
         fill="#000000"

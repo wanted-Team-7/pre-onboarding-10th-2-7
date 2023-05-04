@@ -1,14 +1,27 @@
+import React from 'react';
 import SearchResultList from './SearchResultList';
 import { SearchResultArea } from '../style/SearchResult.styled';
 import { SearchResults } from '../types/result';
 
-const SearchResult = ({ searchResult }: { searchResult: SearchResults[] }) => {
+interface SearchResultType {
+  searchResult: SearchResults[];
+  focusRef: React.RefObject<HTMLOListElement>;
+  focusIndex: number;
+}
+
+const SearchResult = ({ searchResult, focusRef, focusIndex }: SearchResultType) => {
   return (
-    <SearchResultArea>
+    <SearchResultArea ref={focusRef}>
       <span>추천 검색어</span>
       {searchResult &&
-        searchResult.map(result => {
-          return <SearchResultList key={result.id} result={result} />;
+        searchResult.map((result, idx) => {
+          return (
+            <SearchResultList
+              key={result.id}
+              result={result}
+              isFocus={idx === focusIndex ? true : false}
+            />
+          );
         })}
     </SearchResultArea>
   );

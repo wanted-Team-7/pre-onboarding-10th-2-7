@@ -8,7 +8,12 @@ import {
 } from '../style/SearchInput.styled';
 import { SetSearchResultFunc } from '../types/result';
 
-const SearchInputComponent = ({ setSearchResult }: SetSearchResultFunc) => {
+interface SearchInputComponentType {
+  setSearchResult: SetSearchResultFunc['setSearchResult'];
+  keydownHandler: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+}
+
+const SearchInputComponent = ({ setSearchResult, keydownHandler }: SearchInputComponentType) => {
   const [searchWord, setSearchWord] = useState<string>('');
 
   const onChangeInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,6 +36,7 @@ const SearchInputComponent = ({ setSearchResult }: SetSearchResultFunc) => {
           placeholder="질환명을 입력해 주세요."
           value={searchWord}
           onChange={onChangeInputHandler}
+          onKeyDown={keydownHandler}
         />
         <DeleteButton type="button">
           <span>x</span>
