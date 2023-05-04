@@ -16,7 +16,7 @@ export default function SearchPage() {
     setIsOpen(true);
   };
 
-  const searchCloseHandler = () => {
+  const dropdownCloseHandler = () => {
     setIsOpen(false);
   };
 
@@ -40,7 +40,7 @@ export default function SearchPage() {
   }, [inputValue]);
 
   return (
-    <Container onClick={searchCloseHandler}>
+    <Container onClick={dropdownCloseHandler}>
       <ContentWrapper>
         <Title />
         <SearchInput onChange={e => setInputValue(e.target.value)} onClick={inputOnClickHandler} />
