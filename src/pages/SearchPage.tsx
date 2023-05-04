@@ -26,13 +26,14 @@ export default function SearchPage() {
     setSelectedIndex(-1);
   };
 
-  const onKeyUpHandler = (e: KeyboardEvent<HTMLInputElement>) => {
+  const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
     if (inputValue === '') return;
 
     const lastIndex = serverDataList.length - 1;
 
     switch (e.key) {
       case 'ArrowUp':
+        e.preventDefault();
         selectedIndex === -1 ? setSelectedIndex(lastIndex) : setSelectedIndex(selectedIndex - 1);
         break;
       case 'ArrowDown':
@@ -69,7 +70,7 @@ export default function SearchPage() {
         <SearchInput
           onChange={e => setInputValue(e.target.value)}
           onClick={inputOnClickHandler}
-          onKeyUp={onKeyUpHandler}
+          onKeyDown={onKeyDownHandler}
         />
         {isOpen && (
           <DropdownContainer>

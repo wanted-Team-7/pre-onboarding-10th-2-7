@@ -5,11 +5,11 @@ import { SearchButtonIcon } from '../icons/SearchButtonIcon';
 export default function SearchInput({
   onChange,
   onClick,
-  onKeyUp,
+  onKeyDown,
 }: {
   onChange: ChangeEventHandler<HTMLInputElement>;
   onClick: MouseEventHandler;
-  onKeyUp: KeyboardEventHandler;
+  onKeyDown: KeyboardEventHandler;
 }) {
   return (
     <InputContainer>
@@ -18,7 +18,7 @@ export default function SearchInput({
         placeholder="질환명을 입력해 주세요."
         onChange={onChange}
         onClick={onClick}
-        onKeyUp={onKeyUp}
+        onKeyDown={onKeyDown}
       />
       <ButtonContainer>
         <SearchButtonIcon />
