@@ -7,12 +7,12 @@ const instance = axios.create({
 
 instance.interceptors.response.use(
   response => {
-    console.info('calling api');
     return response;
   },
   error => Promise.reject(error)
 );
 
 export const fetchData = (urlParameter: string) => {
+  console.info('calling api');
   return instance.get(urlParameter);
 };
