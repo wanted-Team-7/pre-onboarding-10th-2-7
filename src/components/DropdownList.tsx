@@ -20,7 +20,7 @@ export default function DropdownList({
 
 const KeywordContainer = styled.li`
   display: flex;
-  padding: 10px 12px 15px 25px;
+  padding: 14px 12px 14px 25px;
   gap: 0.5rem;
   align-items: center;
 
