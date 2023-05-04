@@ -4,6 +4,7 @@ import { getSearchResults } from '../apis/searchApis';
 import { ResultsType } from '../types/searchTypes';
 import useSearchInput from '../hooks/useSearchInput';
 import useCache from '../hooks/useCache';
+import useMakeFocusIndex from '../hooks/useMakeFocusIndex';
 import SearchResults from './SearchResults';
 import RecentSearchTerms from './RecentSearchTerms';
 import styled from 'styled-components';
@@ -19,8 +20,7 @@ export default function SearchSection({
   const { searchInput, handledSearchInput, handledSearchInputClear } = useSearchInput();
   const { searchResultStore, addSearchResultStore, deleteSearchResultStore } = useCache();
   const [searchResults, setSearchResults] = useState<ResultsType[]>([]);
-  const [focusIndex, setFocusIndex] = useState(-1);
-
+  const { focusIndex, changeIndexNumber } = useMakeFocusIndex();
   const searchTerm = useDebounce(searchInput, 500);
 
   useEffect(deleteSearchResultStore, [searchResultStore]);
@@ -43,22 +43,6 @@ export default function SearchSection({
     } else setSearchResults([]);
   }, [searchTerm]);
 
-  function changeIndexNumber(event: React.KeyboardEvent<HTMLInputElement>) {
-    console.log(event.key);
-    if (event.key === 'ArrowDown') {
-      searchResults.length > 0 && searchResults.length < 7
-        ? setFocusIndex(prev => (prev + 1) % searchResults.length)
-        : setFocusIndex(prev => (prev + 1) % 7);
-    }
-    if (event.key === 'ArrowUp') {
-      searchResults.length > 0 && searchResults.length < 7
-        ? setFocusIndex(prev => (prev - 1 + searchResults.length) % searchResults.length)
-        : setFocusIndex(prev => (prev - 1 + 7) % 7);
-    }
-    if (event.key === 'Backspace' || searchInput === '') {
-      setFocusIndex(-1);
-    }
-  }
   return (
     <Style.Container>
       <Style.SearchBar isVisibleSearchResults={isVisibleSearchResults}>
@@ -79,7 +63,7 @@ export default function SearchSection({
             value={searchInput}
             onChange={handledSearchInput}
             onClick={() => setIsVisibleSearchResults(true)}
-            onKeyDown={changeIndexNumber}
+            onKeyDown={event => changeIndexNumber(event, searchResults, searchInput)}
             placeholder="질환명을 입력해주세요."
           />
           {searchInput && (
