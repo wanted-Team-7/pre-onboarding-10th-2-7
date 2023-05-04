@@ -43,12 +43,12 @@ export default function SearchPage() {
         <Title />
         <SearchInput onChange={e => setInputValue(e.target.value)} onClick={inputOnClickHandler} />
         {isOpen && (
-          <SearchSelect>
+          <DropdownContainer>
             <li id="recommendKeywordLabel">추천 검색어</li>
             {serverDataList.map(data => (
               <DropdownList keyword={data.name} key={data.id} />
             ))}
-          </SearchSelect>
+          </DropdownContainer>
         )}
       </ContentWrapper>
     </Container>
@@ -70,7 +70,7 @@ const ContentWrapper = styled.div`
   padding-top: 80px;
 `;
 
-const SearchSelect = styled.ul`
+const DropdownContainer = styled.ul`
   max-width: 490px;
   width: 100%;
   background-color: white;
