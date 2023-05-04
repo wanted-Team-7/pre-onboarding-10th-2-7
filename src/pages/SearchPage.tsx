@@ -36,7 +36,7 @@ export default function SearchPage() {
         selectedIndex === -1 ? setSelectedIndex(lastIndex) : setSelectedIndex(selectedIndex - 1);
         break;
       case 'ArrowDown':
-        selectedIndex === lastIndex ? setSelectedIndex(-1) : setSelectedIndex(selectedIndex + 1);
+        selectedIndex === lastIndex ? setSelectedIndex(0) : setSelectedIndex(selectedIndex + 1);
         break;
       default:
         break;
