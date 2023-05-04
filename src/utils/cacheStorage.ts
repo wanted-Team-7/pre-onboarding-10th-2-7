@@ -1,7 +1,4 @@
-interface DataItem {
-  name: string;
-  id: number;
-}
+import { DataItem } from '../types/searchData';
 
 const prefixKeyword = 'caching--';
 

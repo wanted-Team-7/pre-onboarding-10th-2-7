@@ -4,12 +4,9 @@ import SearchInput from '../components/SearchInput';
 import DropdownList from '../components/DropdownList';
 import Title from '../components/Title';
 import { getServerData } from '../apis/getServerData';
+import { DataItem } from '../types/searchData';
 
 export default function SearchPage() {
-  interface DataItem {
-    name: string;
-    id: number;
-  }
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>('');
   const [serverDataList, setServerDataList] = useState<DataItem[]>([]);
