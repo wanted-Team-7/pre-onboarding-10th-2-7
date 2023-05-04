@@ -157,6 +157,7 @@ const SearchResultKeyword = styled.li`
   padding: 8px;
   cursor: default;
   strong {
+    font-weight: bold;
     margin-left: 6px;
   }
 `;

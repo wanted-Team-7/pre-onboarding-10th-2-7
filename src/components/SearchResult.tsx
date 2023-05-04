@@ -34,6 +34,7 @@ const Li = styled.li<{ isFocus: [number, number] }>`
   background-color: ${props => (props.isFocus[0] === props.isFocus[1] ? '#90cdf4' : 'inherit')};
 
   strong {
+    font-weight: bold;
     margin-left: 6px;
   }
 `;
