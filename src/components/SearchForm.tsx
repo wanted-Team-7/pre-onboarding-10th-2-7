@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { SearchFormType } from '../types/search';
 import { searchApi } from '../api/searchApi';
 import useDebounce from '../hook/useDebounce';
+import useCache from '../hook/useCache';
 
 function SearchForm({
   search,
@@ -12,6 +13,7 @@ function SearchForm({
   handleKeyDown,
 }: SearchFormType) {
   const debouncedSearch = useDebounce(search, 500);
+  const { addCache, getCache } = useCache();
 
   const handleChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
@@ -19,7 +21,21 @@ function SearchForm({
 
   useEffect(() => {
     const getSearchList = async () => {
+      if (search.trim() === '') {
+        setSearchResult([]);
+        setIndex(-1);
+        return;
+      }
       const { data: result } = await searchApi(debouncedSearch);
+      const data = getCache(search);
+      if (data !== null) {
+        console.log(search, 'cache!!');
+        setSearchResult(data);
+        setIndex(-1);
+        return;
+      }
+      console.log(search, 'not cache!!');
+      addCache(search, result);
       setSearchResult(result);
       setIndex(-1);
     };
