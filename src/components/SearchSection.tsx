@@ -3,7 +3,7 @@ import useDebounce from '../hooks/useDebounce';
 import { getSearchResults } from '../apis/searchApis';
 import { ResultsType } from '../types/searchTypes';
 import useSearchInput from '../hooks/useSearchInput';
-import useSearchStore from '../hooks/useSearchStore';
+import useCache from '../hooks/useCache';
 import SearchResults from './SearchResults';
 import RecentSearchTerms from './RecentSearchTerms';
 import styled from 'styled-components';
@@ -17,13 +17,13 @@ export default function SearchSection({
   setIsVisibleSearchResults,
 }: SearchSectionType) {
   const { searchInput, handledSearchInput, handledSearchInputClear } = useSearchInput();
-  const { searchResultStore, addSearchResultStore, deleteSearchResult } = useSearchStore();
+  const { searchResultStore, addSearchResultStore, deleteSearchResultStore } = useCache();
   const [searchResults, setSearchResults] = useState<ResultsType[]>([]);
   const [focusIndex, setFocusIndex] = useState(-1);
 
   const searchTerm = useDebounce(searchInput, 500);
 
-  useEffect(deleteSearchResult, [searchResultStore]);
+  useEffect(deleteSearchResultStore, [searchResultStore]);
 
   async function onSearchData() {
     const response = await getSearchResults(searchTerm);

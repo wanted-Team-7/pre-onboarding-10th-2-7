@@ -1,17 +1,16 @@
 import { useState } from 'react';
 import { ResultsType, SearchResultStoreType } from '../types/searchTypes';
 
-export default function useSearchStore() {
+export default function useCache() {
   const [searchResultStore, setSearchResultStore] = useState<SearchResultStoreType[]>([
     { searchTerm: '', resultList: [] },
   ]);
 
-  // TODO: 변수명 변경
   function addSearchResultStore(resultList: ResultsType[], searchTerm: string) {
     setSearchResultStore(prev => [...prev, { searchTerm, resultList }]);
   }
 
-  function deleteSearchResult() {
+  function deleteSearchResultStore() {
     const timer = setTimeout(() => {
       let copySearchResultStore = [...searchResultStore];
       copySearchResultStore.shift();
@@ -22,5 +21,5 @@ export default function useSearchStore() {
       clearTimeout(timer);
     };
   }
-  return { searchResultStore, addSearchResultStore, deleteSearchResult };
+  return { searchResultStore, addSearchResultStore, deleteSearchResultStore };
 }
