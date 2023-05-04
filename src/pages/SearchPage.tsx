@@ -20,6 +20,8 @@ export default function SearchPage() {
     setIsOpen(false);
   };
 
+  const isNoData = serverDataList.length === 0;
+
   useEffect(() => {
     (async () => {
       if (inputValue === null || inputValue.trim() === '') return;
@@ -45,6 +47,7 @@ export default function SearchPage() {
         {isOpen && (
           <DropdownContainer>
             <li id="recommendKeywordLabel">추천 검색어</li>
+            {isNoData && <li id="noDataLabel">추천 검색어 없음</li>}
             {serverDataList.map(data => (
               <DropdownList keyword={data.name} key={data.id} />
             ))}
@@ -83,5 +86,9 @@ const DropdownContainer = styled.ul`
     padding: 8px 12px;
     color: #6a737b;
     font-size: 13px;
+  }
+
+  #noDataLabel {
+    padding: 8px 12px;
   }
 `;
