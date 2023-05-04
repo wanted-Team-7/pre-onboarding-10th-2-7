@@ -1,12 +1,7 @@
 import { useState } from 'react';
 import { SearchResultTypes } from '../types/search';
-
-const ONE_MINUTE = 1000 * 60;
-
-interface CacheType {
-  key: string;
-  value: SearchResultTypes[];
-}
+import { CacheType } from '../types/cache';
+import { ONE_MINUTE } from '../constants';
 
 export const useCache = () => {
   const [cache, setCache] = useState<CacheType[]>([]);

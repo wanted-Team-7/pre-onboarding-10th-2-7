@@ -19,27 +19,26 @@ function SearchForm({
     setSearch(event.target.value);
   };
 
-  useEffect(() => {
-    const getSearchList = async () => {
-      if (search.trim() === '') {
-        setSearchResult([]);
-        setIndex(-1);
-        return;
-      }
-      const { data: result } = await searchApi(debouncedSearch);
-      const data = getCache(search);
-      if (data !== null) {
-        console.log(search, 'cache!!');
-        setSearchResult(data);
-        setIndex(-1);
-        return;
-      }
-      console.log(search, 'not cache!!');
-      addCache(search, result);
-      setSearchResult(result);
+  const handleFetchSearchResult = async () => {
+    if (search.trim() === '') {
+      setSearchResult([]);
       setIndex(-1);
-    };
-    getSearchList();
+      return;
+    }
+    const data = getCache(search);
+    if (data !== null) {
+      setSearchResult(data);
+      setIndex(-1);
+      return;
+    }
+    const { data: result } = await searchApi(debouncedSearch);
+    addCache(search, result);
+    setSearchResult(result);
+    setIndex(-1);
+  };
+
+  useEffect(() => {
+    handleFetchSearchResult();
   }, [debouncedSearch]);
 
   return (
