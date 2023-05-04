@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import API from './API/API';
-import useDebounce from './hooks/useDebounce';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import SearchBar from './components/SearchBar';
 import SearchedList from './views/SearchedList';
-import useExpirationCache from './hooks/useExpirationCache';
-import { MAX_SEARCHED_RESULT_NUM, ONE_HOUR } from './utils/constants';
+import { MAX_SEARCHED_RESULT_NUM } from './utils/constants';
+import useSearch from './hooks/useSearch';
 
 export interface SearchedResponseItem {
   id: number;
@@ -14,12 +12,12 @@ export interface SearchedResponseItem {
 
 const App = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [searchedResponse, setSearchedResponse] = useState<SearchedResponseItem[]>([]);
   const [isFocused, setIsFocused] = useState<boolean>(false);
-  const [isSearching, setIsSearching] = useState<boolean>(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState<number>(-1);
-  const debouncedSearchTerm = useDebounce(searchQuery, 300);
-  const { addItem, getItem } = useExpirationCache();
+  const { searchedResponse, isSearching, handleSearch, getSearchData } = useSearch({
+    searchQuery,
+    debounceDelay: 300,
+  });
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowUp') {
@@ -54,50 +52,6 @@ const App = () => {
     setSearchQuery(e.target.value);
     setSelectedItemIndex(-1);
   };
-
-  const checkCacheAndSetResponse = (searchQuery: string) => {
-    const cachedValue = getItem(searchQuery);
-
-    if (cachedValue) {
-      setSearchedResponse(cachedValue);
-      setIsSearching(false);
-      return true;
-    }
-    return false;
-  };
-
-  const handleSearch = async (searchQuery: string) => {
-    if (searchQuery.trim() !== '') {
-      const isCached = checkCacheAndSetResponse(searchQuery);
-
-      if (!isCached) {
-        setIsSearching(true);
-        const response = await API.search({ name: searchQuery });
-        setSearchedResponse(response.data);
-        setIsSearching(false);
-        addItem(searchQuery, response.data, ONE_HOUR);
-      }
-    }
-  };
-
-  const getSearchData = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    await handleSearch(searchQuery);
-
-    const recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
-    recentSearches.push(searchQuery);
-    localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
-
-    addItem(searchQuery, searchedResponse, ONE_HOUR);
-  };
-
-  useEffect(() => {
-    const isNotEmpty = debouncedSearchTerm.trim() !== '';
-
-    isNotEmpty && handleSearch(debouncedSearchTerm);
-    // FIXME
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchTerm]);
 
   return (
     <Layout>
