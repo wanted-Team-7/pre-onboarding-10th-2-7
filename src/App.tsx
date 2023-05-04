@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import SearchBar from './components/SearchBar';
 import SearchedList from './components/SearchedList';
-import { MAX_SEARCHED_RESULT_NUM } from './utils/constants';
+import { DEBOUNCED_TIME, MAX_SEARCHED_RESULT_NUM } from './utils/constants';
 import useSearch from './hooks/useSearch';
 
 export interface SearchedResponseItem {
@@ -16,7 +16,7 @@ const App = () => {
   const [selectedItemIndex, setSelectedItemIndex] = useState<number>(-1);
   const { searchedResponse, isSearching, handleSearch, getSearchData } = useSearch({
     searchQuery,
-    debounceDelay: 300,
+    debounceDelay: DEBOUNCED_TIME,
   });
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
