@@ -19,6 +19,7 @@ export default function SearchPage() {
     setIsOpen(false);
   };
 
+  // TEST CODE
   const testArr = ['간상선암', '갑상선염', '갑상선중독증', '갑상선 항진증'];
 
   return (
