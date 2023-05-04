@@ -3,7 +3,6 @@
 
 - **프로젝트 기간:** 2023년 5월 2일 ~ 2023년 5월 5일
 
-
 <br />
 
 ## ⌨️  프로젝트 실행 방법
@@ -34,6 +33,8 @@ $ npm start
 ## 주요 기능
 
 ### 1. 질환명 검색시 API 호출 통해서 검색어 추천 기능 구현
+<img src="https://user-images.githubusercontent.com/118191378/236260629-f11fefbc-69e5-4bec-979f-d93a56d8f9f9.gif" width="50%" height="50%"/>
+
 ```tsx
 /* SearchSection.tsx */
 
@@ -106,6 +107,11 @@ export default useDebounce;
 <br />
 
 ### 2. API 호출별로 로컬 캐싱 구현
+
+** 데모영상 부연설명 : 심장 - 갑상선 - 심장 재검색 시 console에 calling api 횟수가 증가하지 않음을 확인할 수 있습니다. 
+
+<img src="https://user-images.githubusercontent.com/118191378/236259318-241dbbbe-2b7d-48e6-b75a-113b94dacb24.gif" width="50%" height="50%"/>
+
 ```tsx
 /* useCache.ts */
 
@@ -140,6 +146,8 @@ export default function useCache() {
 <br />
 
 ### 3. 키보드만으로 추천 검색어들로 이동 가능하도록 구현
+<img src="https://user-images.githubusercontent.com/118191378/236258656-11766893-9b63-4e80-bda2-74ac7b1b1699.gif" width="50%" height="50%"/>
+
 ```tsx
 /* SearchSection.tsx */
 
@@ -234,12 +242,10 @@ export default function useMakeFocusIndex() {
  ┗ 📜setupProxy.js
 ```
 
-
-
 <br />
 
 ## 🔨 사용 기술
-<img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white"> <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=CSS3&logoColor=white"><img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white">
+<img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white"> <img src="https://img.shields.io/badge/axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white"> <img src="https://img.shields.io/badge/styledcomponents-ff69b4?style=for-the-badge&logo=styled-components&logoColor=white"> 
 
 <br />
 
@@ -257,5 +263,3 @@ export default function useMakeFocusIndex() {
 | comment | 파일을 삭제만 한 경우 |
 | chore | 환경설정, 빌드 업무, 패키지 매니저 설정 등 |
 | hotfix | 치명적이거나 급한 버그 수정 |
-
-
