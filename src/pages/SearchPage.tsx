@@ -12,6 +12,9 @@ export default function SearchPage() {
   const [inputValue, setInputValue] = useState<string>('');
   const [serverDataList, setServerDataList] = useState<DataItem[]>([]);
 
+  const debouncedSearchText = useDebounce(inputValue, 200);
+  const isNoData = serverDataList.length === 0;
+
   const inputOnClickHandler = (e: { stopPropagation: () => void }) => {
     e.stopPropagation();
     setIsOpen(true);
@@ -20,10 +23,6 @@ export default function SearchPage() {
   const dropdownCloseHandler = () => {
     setIsOpen(false);
   };
-
-  const debouncedSearchText = useDebounce(inputValue, 200);
-
-  const isNoData = serverDataList.length === 0;
 
   useEffect(() => {
     (async () => {
