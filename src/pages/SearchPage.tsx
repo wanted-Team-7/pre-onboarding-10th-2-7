@@ -4,7 +4,7 @@ import SearchInput from '../components/SearchInput';
 import DropdownList from '../components/DropdownList';
 import Title from '../components/Title';
 import { getServerData } from '../apis/getServerData';
-import { DataItem } from '../types/DataType';
+import { DataItem } from '../types/types';
 import useDebounce from '../hooks/useDebounce';
 
 export default function SearchPage() {

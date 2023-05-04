@@ -1,15 +1,8 @@
 import styled from 'styled-components';
 import { DropdownListIcon } from '../icons/DropdownListIcon';
+import { DropdownListProps } from '../types/types';
 
-export default function DropdownList({
-  keyword,
-  selectedIndex,
-  dataIndex,
-}: {
-  keyword: string;
-  selectedIndex: number;
-  dataIndex: number;
-}) {
+export default function DropdownList({ keyword, selectedIndex, dataIndex }: DropdownListProps) {
   return (
     <KeywordContainer className={dataIndex === selectedIndex ? 'selected' : ''}>
       <DropdownListIcon />

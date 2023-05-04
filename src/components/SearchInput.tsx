@@ -1,16 +1,8 @@
 import styled from 'styled-components';
-import { ChangeEventHandler, KeyboardEventHandler, MouseEventHandler } from 'react';
 import { SearchButtonIcon } from '../icons/SearchButtonIcon';
+import { SearchInputProps } from '../types/types';
 
-export default function SearchInput({
-  onChange,
-  onClick,
-  onKeyDown,
-}: {
-  onChange: ChangeEventHandler<HTMLInputElement>;
-  onClick: MouseEventHandler;
-  onKeyDown: KeyboardEventHandler;
-}) {
+export default function SearchInput({ onChange, onClick, onKeyDown }: SearchInputProps) {
   return (
     <InputContainer>
       <Input
