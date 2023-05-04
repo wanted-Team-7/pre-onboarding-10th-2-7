@@ -1,14 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import SearchInput from '../components/SearchInput';
 import DropdownList from '../components/DropdownList';
 import Title from '../components/Title';
+import { getServerData } from '../apis/getServerData';
 
 export default function SearchPage() {
+  interface DataItem {
+    name: string;
+    id: number;
+  }
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>('');
-
-  console.log(inputValue);
+  const [serverDataList, setServerDataList] = useState<DataItem[]>([]);
 
   const inputOnClickHandler = (e: { stopPropagation: () => void }) => {
     e.stopPropagation();
@@ -19,8 +23,22 @@ export default function SearchPage() {
     setIsOpen(false);
   };
 
-  // TEST CODE
-  const testArr = ['간상선암', '갑상선염', '갑상선중독증', '갑상선 항진증'];
+  useEffect(() => {
+    (async () => {
+      if (inputValue === null || inputValue.trim() === '') return;
+
+      let serverData;
+      try {
+        serverData = await getServerData({ name: inputValue }, { isCached: true });
+      } catch (error) {
+        console.log(error);
+      }
+
+      if (serverData === null) return;
+
+      setServerDataList(serverData);
+    })();
+  }, [inputValue]);
 
   return (
     <Container onClick={searchCloseHandler}>
@@ -30,8 +48,8 @@ export default function SearchPage() {
         {isOpen && (
           <SearchSelect>
             <li id="recommendKeywordLabel">추천 검색어</li>
-            {testArr.map(item => (
-              <DropdownList keyword={item} />
+            {serverDataList.map(data => (
+              <DropdownList keyword={data.name} key={data.id} />
             ))}
           </SearchSelect>
         )}
