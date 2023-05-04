@@ -27,7 +27,6 @@ function App() {
   };
   const inputOnKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (searchData.length === 0 || (e.code !== 'ArrowUp' && e.code !== 'ArrowDown')) return;
-
     e.preventDefault();
 
     if (e.code === 'ArrowUp') {
@@ -65,7 +64,7 @@ function App() {
     }, DEBOUNCE_TIMEOUT_SEC * 1000);
     return () => clearTimeout(debounceTimeout);
   }, [searchKeyword]);
-  console.log('data: ', searchData);
+
   return (
     <Main>
       <Title>2주차 기업과제</Title>
@@ -99,10 +98,10 @@ function App() {
               searchData.map((el, idx) => (
                 <SearchResult
                   key={el.id}
+                  name={el.name}
                   index={idx}
                   onMouseOver={liMouseOverHandler}
                   elIndexFocused={elIndexFocused}
-                  name={el.name}
                   searchKeywordLength={searchKeyword.length}
                 />
               ))}
