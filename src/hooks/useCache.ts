@@ -15,7 +15,7 @@ export default function useCache() {
       let copySearchResultStore = [...searchResultStore];
       copySearchResultStore.shift();
       setSearchResultStore([...copySearchResultStore]);
-    }, 5000);
+    }, 60000);
 
     return () => {
       clearTimeout(timer);
