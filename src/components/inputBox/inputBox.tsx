@@ -13,7 +13,7 @@ interface Props {
   setIsFocus: React.Dispatch<React.SetStateAction<boolean>>;
   setIsInputValue: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
-  handleKeyboard: any;
+  handleKeyboard: React.KeyboardEventHandler<HTMLInputElement>;
   isFocus: boolean;
   isInputValue: boolean;
 }
@@ -27,6 +27,7 @@ const InputBox = ({
   handleKeyboard,
   setCurrentIndex,
 }: Props) => {
+  const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState<string>('');
   const debounceValue: string = useDebounce(inputValue, DEBOUNCE_TIME);
@@ -40,6 +41,20 @@ const InputBox = ({
 
     setInputValue(e.target.value);
   };
+
+  const handleFocusOut = ({ target }: any) => {
+    if (!formRef.current?.contains(target)) {
+      setIsFocus(false);
+      setCurrentIndex(-1);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('click', handleFocusOut);
+    return () => {
+      window.removeEventListener('click', handleFocusOut);
+    };
+  });
 
   useEffect(() => {
     const getSearchWordList = async () => {
@@ -55,15 +70,14 @@ const InputBox = ({
     handleExpireCache();
   }, []);
 
-  // const onClickDeleteBtn = () => {
-  //   console.log(inputRef);
-  //   setInputValue('');
-  //   inputRef.current?.focus();
-  // };
+  const onClickDeleteBtn = () => {
+    setInputValue('');
+    inputRef.current?.focus();
+  };
 
   return (
     <S.Container>
-      <S.FormContainer isFocus={isFocus}>
+      <S.FormContainer isFocus={isFocus} ref={formRef}>
         {!isFocus && !isInputValue ? (
           <S.NotFocus>
             <Magnifier width={16} height={16} color={'#A7AFB7'} />
@@ -76,14 +90,10 @@ const InputBox = ({
             value={inputValue}
             onChange={handleChange}
             onFocus={() => setIsFocus(true)}
-            onBlur={() => {
-              setIsFocus(false);
-              setCurrentIndex(-2);
-            }}
             onKeyDown={handleKeyboard}
           />
           {isFocus ? (
-            <span onClick={() => console.log('hello')}>
+            <span onClick={onClickDeleteBtn}>
               <Delete width={16} height={16} />
             </span>
           ) : null}
