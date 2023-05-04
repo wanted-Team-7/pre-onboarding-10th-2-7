@@ -38,9 +38,17 @@ const SearchInputComponent = ({ setSearchResult, keydownHandler }: SearchInputCo
           onChange={onChangeInputHandler}
           onKeyDown={keydownHandler}
         />
-        <DeleteButton type="button">
-          <span>x</span>
-        </DeleteButton>
+        {searchWord && (
+          <DeleteButton
+            type="button"
+            onClick={() => {
+              setSearchWord('');
+            }}
+          >
+            <span>x</span>
+          </DeleteButton>
+        )}
+
         <SearchButton type="submit">
           <span>검색버튼</span>
           <svg
