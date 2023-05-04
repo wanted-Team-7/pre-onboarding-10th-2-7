@@ -26,4 +26,5 @@ const StyledText = styled.span`
   margin: 10px;
   font-size: 16px;
 `;
+
 export default SearchInputPlaceholder;
