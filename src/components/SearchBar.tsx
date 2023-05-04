@@ -10,6 +10,7 @@ interface SearchBarProps {
   isFocused: boolean;
   handleFocus: () => void;
   handleBlur: () => void;
+  onKeyDown: any;
 }
 
 const SearchBar = ({
@@ -19,6 +20,7 @@ const SearchBar = ({
   isFocused,
   handleFocus,
   handleBlur,
+  onKeyDown,
 }: SearchBarProps) => {
   return (
     <StyledForm onSubmit={getSearchData} isFocused={isFocused}>
@@ -32,6 +34,7 @@ const SearchBar = ({
           onBlur={handleBlur}
           onChange={handleChange}
           aria-label="검색어 입력"
+          onKeyDown={onKeyDown}
         />
       </StyledLabel>
       <LargeSearchIcon getSearchData={getSearchData} />

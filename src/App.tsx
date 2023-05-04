@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import SearchBar from './components/SearchBar';
 import SearchedList from './views/SearchedList';
 import useExpirationCache from './hooks/useExpirationCache';
-import { ONE_HOUR } from './utils/constants';
+import { MAX_SEARCHED_RESULT_NUM, ONE_HOUR } from './utils/constants';
 
 export interface SearchedResponseItem {
   id: number;
@@ -19,6 +19,20 @@ const App = () => {
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const debouncedSearchTerm = useDebounce(searchQuery, 300);
   const { addItem, getItem } = useExpirationCache();
+  const [selectedItemIndex, setSelectedItemIndex] = useState<number>(-1);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedItemIndex(prevIndex => Math.max(prevIndex - 1, 0));
+    }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedItemIndex(prevIndex =>
+        Math.min(prevIndex + 1, searchedResponse.length - 1, MAX_SEARCHED_RESULT_NUM - 1)
+      );
+    }
+  };
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -30,6 +44,7 @@ const App = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
+    setSelectedItemIndex(-1);
   };
 
   const checkCacheAndSetResponse = (searchQuery: string) => {
@@ -58,14 +73,11 @@ const App = () => {
   const getSearchData = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await handleSearch(searchQuery);
-    // 이전 검색어 배열 가져오기
+
     const recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
-
-    // 새로운 검색어를 배열에 추가
     recentSearches.push(searchQuery);
-
-    // 최근 검색어 배열을 localstorage에 저장
     localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+
     addItem(searchQuery, searchedResponse, ONE_HOUR);
   };
 
@@ -73,12 +85,16 @@ const App = () => {
     const isNotEmpty = debouncedSearchTerm.trim() !== '';
 
     isNotEmpty && handleSearch(debouncedSearchTerm);
+    // FIXME
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchTerm]);
 
   return (
     <Layout>
       <Wrapper>
+        인턴십 7팀 이지윤
         <StyledH2>
+          <br />
           국내 모든 임상시험 검색하고
           <br />
           온라인으로 참여하기
@@ -90,12 +106,14 @@ const App = () => {
           isFocused={isFocused}
           handleFocus={handleFocus}
           handleBlur={handleBlur}
+          onKeyDown={handleKeyDown}
         />
         {isFocused && (
           <SearchedList
             searchedResponse={searchedResponse}
             searchQuery={searchQuery}
             isSearching={isSearching}
+            selectedItemIndex={selectedItemIndex}
           />
         )}
       </Wrapper>

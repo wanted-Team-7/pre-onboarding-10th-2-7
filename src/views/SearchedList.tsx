@@ -3,15 +3,23 @@ import styled from 'styled-components';
 import SearchedItem from './SearchedItem';
 import { SmallSearchIcon } from '../assets/SearchSVG';
 import { SearchedResponseItem } from '../App';
+import { MAX_SEARCHED_RESULT_NUM } from '../utils/constants';
 
 interface SearchedListProps {
   searchedResponse: SearchedResponseItem[];
   searchQuery: string;
   isSearching: boolean;
+  selectedItemIndex: any;
 }
 
-const SearchedList = ({ searchedResponse, searchQuery, isSearching }: SearchedListProps) => {
+const SearchedList = ({
+  searchedResponse,
+  searchQuery,
+  isSearching,
+  selectedItemIndex,
+}: SearchedListProps) => {
   const isSearchEmpty = searchQuery.trim() === '';
+  const hasSearchedResponse = searchedResponse.length;
   const recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
 
   return (
@@ -20,7 +28,7 @@ const SearchedList = ({ searchedResponse, searchQuery, isSearching }: SearchedLi
         {isSearchEmpty ? (
           <>
             <StyledText>최근 검색어</StyledText>
-            {recentSearches.slice(0, 7).map((item: string, index: number) => (
+            {recentSearches.slice(0, MAX_SEARCHED_RESULT_NUM).map((item: string, index: number) => (
               <SearchedItem key={index} id={index} name={item} searchQuery={searchQuery} />
             ))}
           </>
@@ -37,11 +45,17 @@ const SearchedList = ({ searchedResponse, searchQuery, isSearching }: SearchedLi
               <StyledText>검색중 ...</StyledText>
             ) : (
               <>
-                {searchedResponse.length ? (
+                {hasSearchedResponse ? (
                   searchedResponse
-                    .slice(0, 7)
-                    .map((item: SearchedResponseItem) => (
-                      <SearchedItem key={item.id} {...item} searchQuery={searchQuery} />
+                    .slice(0, MAX_SEARCHED_RESULT_NUM)
+                    .map((item: SearchedResponseItem, index: number) => (
+                      <SearchedItem
+                        key={index}
+                        id={index}
+                        name={item.name}
+                        searchQuery={searchQuery}
+                        isSelected={index === selectedItemIndex}
+                      />
                     ))
                 ) : (
                   <StyledText>검색 결과가 없습니다.</StyledText>
@@ -67,12 +81,13 @@ const StyledLayout = styled.div`
   margin: 10px;
 `;
 
-export const StyledDiv = styled.div`
+export const StyledDiv = styled.div<{ isSelected?: boolean }>`
   display: flex;
   align-items: center;
   height: 40px;
   padding: 0 30px;
   cursor: pointer;
+  background-color: ${({ isSelected }) => isSelected && '#f6f6f6'};
   &:hover {
     background-color: #f6f6f6;
   }
