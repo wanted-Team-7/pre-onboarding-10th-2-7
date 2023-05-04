@@ -31,12 +31,15 @@ export default function SearchPage() {
 
     const lastIndex = serverDataList.length - 1;
 
-    if (e.key === 'ArrowUp') {
-      selectedIndex === -1 ? setSelectedIndex(lastIndex) : setSelectedIndex(selectedIndex - 1);
-    }
-
-    if (e.key === 'ArrowDown') {
-      selectedIndex === lastIndex ? setSelectedIndex(-1) : setSelectedIndex(selectedIndex + 1);
+    switch (e.key) {
+      case 'ArrowUp':
+        selectedIndex === -1 ? setSelectedIndex(lastIndex) : setSelectedIndex(selectedIndex - 1);
+        break;
+      case 'ArrowDown':
+        selectedIndex === lastIndex ? setSelectedIndex(-1) : setSelectedIndex(selectedIndex + 1);
+        break;
+      default:
+        break;
     }
   };
 
