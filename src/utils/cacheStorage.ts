@@ -1,4 +1,4 @@
-import { DataItem } from '../types/searchData';
+import { DataItem } from '../types/DataType';
 
 const prefixKeyword = 'caching--';
 
