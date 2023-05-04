@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import SearchForm from './components/SearchForm';
 import SearchResult from './components/SearchResult';
-import { ReactComponent as SearchIcon } from './assets/search_icon.svg';
 import { DEBOUNCE_TIMEOUT_SEC } from './constants/constant';
 import { ISearchData, getSearchData } from './apis/searchApi';
+import SearchResultKeyword from './components/SearchResultKeyword';
 
 function App() {
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -65,6 +65,7 @@ function App() {
     }, DEBOUNCE_TIMEOUT_SEC * 1000);
     return () => clearTimeout(debounceTimeout);
   }, [searchKeyword]);
+  console.log('data: ', searchData);
   return (
     <Main>
       <Title>2주차 기업과제</Title>
@@ -81,22 +82,20 @@ function App() {
       {isInputFocused && (
         <SearchResultsWrapper>
           <ul>
-            {isLoading && searchData.length === 0 && <SearchResultNone>검색중...</SearchResultNone>}
+            {isLoading && searchData.length === 0 ? (
+              <SearchResultNone>검색중...</SearchResultNone>
+            ) : (
+              <SearchResultKeyword>{searchKeyword}</SearchResultKeyword>
+            )}
+
             {isLoading ||
-              (searchKeyword === '' && (
+              (searchKeyword.trim() === '' && (
                 <SearchResultNone>최근 검색어가 없습니다.</SearchResultNone>
               ))}
-            {isLoading ||
-              (searchKeyword !== '' && (
-                <>
-                  <SearchResultKeyword>
-                    <SearchIcon width={16} height={16} color="rgba(0, 0, 0, 0.5)" />
-                    <strong>{searchKeyword}</strong>
-                  </SearchResultKeyword>
-                </>
-              ))}
+
             {isLoading || (searchData.length !== 0 && <hr />)}
-            {searchData.length !== 0 &&
+
+            {isLoading ||
               searchData.map((el, idx) => (
                 <SearchResult
                   key={el.id}
@@ -131,7 +130,7 @@ const Title = styled.h1`
 const SearchResultsWrapper = styled.div`
   font-size: 16px;
   width: 300px;
-  min-height: 80px;
+  /* min-height: 40px; */
   border-radius: 16px;
   border: 1px solid #0074cc;
   padding: 10px;
@@ -149,17 +148,6 @@ const SearchResultNone = styled.li`
   width: 100%;
   margin-left: 6px;
   cursor: default;
-`;
-
-const SearchResultKeyword = styled.li`
-  width: 100%;
-  display: flex;
-  padding: 8px;
-  cursor: default;
-  strong {
-    font-weight: bold;
-    margin-left: 6px;
-  }
 `;
 
 export default App;
