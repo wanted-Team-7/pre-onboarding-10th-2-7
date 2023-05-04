@@ -2,10 +2,14 @@ import styled from 'styled-components';
 import { ReactComponent as SearchIcon } from '../assets/search_icon.svg';
 import { ReactComponent as CloseIcon } from '../assets/close_icon.svg';
 
-function InputIcon() {
+interface IInputIconProps {
+  isFocused: boolean;
+}
+
+function InputIcon({ isFocused }: IInputIconProps) {
   return (
     <IconWrapper>
-      {true && (
+      {isFocused && (
         <CloseIconButton>
           <CloseIcon width={12} height={12} color="white" />
         </CloseIconButton>

@@ -75,7 +75,7 @@ function App() {
         onFocus={inputOnFocusHandler}
         onBlur={inputOnBlurHandler}
         onKeyDown={inputOnKeyDownHandler}
-        isFocus={isInputFocused}
+        isFocused={isInputFocused}
       />
 
       {isInputFocused && (
