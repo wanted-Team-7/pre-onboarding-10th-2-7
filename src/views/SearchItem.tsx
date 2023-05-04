@@ -1,4 +1,4 @@
-import { BoldText, StyledDiv, StyledLi } from './SearchedList';
+import { BoldText, StyledDiv, StyledLi } from '../components/SearchedList';
 import { SmallSearchIcon } from '../assets/SearchSVG';
 
 interface SearchItemProps {

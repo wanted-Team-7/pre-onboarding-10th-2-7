@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import SearchBar from './components/SearchBar';
-import SearchedList from './views/SearchedList';
+import SearchedList from './components/SearchedList';
 import { MAX_SEARCHED_RESULT_NUM } from './utils/constants';
 import useSearch from './hooks/useSearch';
 

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { SearchedResponseItem } from '../App';
-import RecentSearches from './RecentSearches';
-import RecommendedSearches from './RecommendedSearches';
-import SearchItem from './SearchItem';
+import RecentSearches from '../views/RecentSearches';
+import RecommendedSearches from '../views/RecommendedSearches';
+import SearchItem from '../views/SearchItem';
 
 interface SearchedListProps {
   searchedResponse: SearchedResponseItem[];

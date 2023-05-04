@@ -10,7 +10,7 @@ interface SearchBarProps {
   isFocused: boolean;
   handleFocus: () => void;
   handleBlur: () => void;
-  onKeyDown: any;
+  onKeyDown: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
 const SearchBar = ({

@@ -1,7 +1,7 @@
 import { SearchedResponseItem } from '../App';
 import { MAX_SEARCHED_RESULT_NUM } from '../utils/constants';
-import SearchedItem from './SearchedItem';
-import { StyledText } from './SearchedList';
+import SearchedItem from '../components/SearchedItem';
+import { StyledText } from '../components/SearchedList';
 
 interface RecommendedSearchesProps {
   searchQuery: string;
