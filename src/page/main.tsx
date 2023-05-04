@@ -13,13 +13,13 @@ const Main = () => {
   const handleKeyboard = (e: React.KeyboardEvent) => {
     if (!isFocus || searchList.length === 0) return;
     if (e.key === 'ArrowDown') {
-      console.log('keydown', isFocus, searchList.length, currentIndex);
+      e.preventDefault();
       setCurrentIndex(prev => (prev < searchList.length - 1 ? prev + 1 : prev));
     }
 
     if (e.key === 'ArrowUp') {
+      e.preventDefault();
       setCurrentIndex(prev => (prev > 0 ? prev - 1 : 0));
-      console.log('keyup', isFocus, searchList.length, currentIndex);
     }
   };
 
