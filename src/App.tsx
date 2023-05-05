@@ -21,30 +21,43 @@ function App() {
   const inputOnFocusHandler = () => {
     setIsInputFocused(true);
   };
-  const inputOnBlurHandler = () => {
-    setIsInputFocused(false);
+
+  const handleArrowUpKey = () => {
+    if (elIndexFocused <= 0) {
+      setElIndexFocused(searchData.length - 1);
+    } else {
+      setElIndexFocused(prev => prev - 1);
+    }
+  };
+  const handleArrowDownKey = () => {
+    if (elIndexFocused === searchData.length - 1) {
+      setElIndexFocused(0);
+    } else {
+      setElIndexFocused(prev => prev + 1);
+    }
+  };
+  const handleEscapeKey = () => {
+    setSearchData([]);
+    setSearchKeyword('');
     setElIndexFocused(-1);
   };
-  const inputOnKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.nativeEvent.isComposing) return;
+  const inputOnKeyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const keyArr = ['ArrowUp', 'ArrowDown', 'Escape'];
 
-    if (searchData.length === 0 || (e.code !== 'ArrowUp' && e.code !== 'ArrowDown')) return;
-    e.preventDefault();
+    if (event.nativeEvent.isComposing) return;
+    if (searchData.length === 0 || !keyArr.includes(event.code)) return;
+    event.preventDefault();
 
-    if (e.code === 'ArrowUp') {
-      if (elIndexFocused <= 0) {
-        setElIndexFocused(searchData.length - 1);
-      } else {
-        setElIndexFocused(prev => prev - 1);
-      }
-    }
-
-    if (e.code === 'ArrowDown') {
-      if (elIndexFocused === searchData.length - 1) {
-        setElIndexFocused(0);
-      } else {
-        setElIndexFocused(prev => prev + 1);
-      }
+    switch (event.key) {
+      case 'ArrowUp':
+        handleArrowUpKey();
+        break;
+      case 'ArrowDown':
+        handleArrowDownKey();
+        break;
+      case 'Escape':
+        handleEscapeKey();
+        break;
     }
   };
   const liMouseOverHandler = (e: React.MouseEvent<HTMLLIElement>) => {
@@ -75,9 +88,11 @@ function App() {
         value={searchKeyword}
         onChange={inputOnChangeHandler}
         onFocus={inputOnFocusHandler}
-        onBlur={inputOnBlurHandler}
         onKeyDown={inputOnKeyDownHandler}
         isFocused={isInputFocused}
+        setIsInputFocused={setIsInputFocused}
+        setElIndexFocused={setElIndexFocused}
+        setSearchKeyword={setSearchKeyword}
       />
 
       {isInputFocused && (
