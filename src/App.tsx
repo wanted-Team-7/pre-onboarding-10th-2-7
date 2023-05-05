@@ -21,6 +21,7 @@ function App() {
   const inputOnFocusHandler = () => {
     setIsInputFocused(true);
   };
+
   const inputOnBlurHandler = () => {
     setIsInputFocused(false);
     setElIndexFocused(-1);
@@ -30,6 +31,7 @@ function App() {
       setElIndexFocused(searchData.length - 1);
     } else {
       setElIndexFocused(prev => prev - 1);
+
     }
   };
   const handleArrowDownKey = () => {
@@ -91,9 +93,11 @@ function App() {
         value={searchKeyword}
         onChange={inputOnChangeHandler}
         onFocus={inputOnFocusHandler}
-        onBlur={inputOnBlurHandler}
         onKeyDown={inputOnKeyDownHandler}
         isFocused={isInputFocused}
+        setIsInputFocused={setIsInputFocused}
+        setElIndexFocused={setElIndexFocused}
+        setSearchKeyword={setSearchKeyword}
       />
 
       {isInputFocused && (
