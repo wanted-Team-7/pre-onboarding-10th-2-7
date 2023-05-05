@@ -8,7 +8,6 @@ interface ISearchForm {
   isFocused: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus: () => void;
-  onBlur: () => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   setIsInputFocused: React.Dispatch<React.SetStateAction<boolean>>;
   setElIndexFocused: React.Dispatch<React.SetStateAction<number>>;
@@ -49,6 +48,7 @@ function SearchForm(props: ISearchForm) {
         onFocus={props.onFocus}
         value={props.value}
         onChange={props.onChange}
+        onKeyDown={props.onKeyDown}
       />
       <InputIcon isFocused={props.isFocused} onClickDeleteBtn={onClickDeleteBtn} />
     </Form>
