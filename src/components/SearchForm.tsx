@@ -9,16 +9,22 @@ interface ISearchForm {
   onFocus: () => void;
   onBlur: () => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  clearKeyword: React.Dispatch<React.SetStateAction<string>>;
 }
 
 function SearchForm(props: ISearchForm) {
   const formSumbitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
+
+  const deleteHandler = () => {
+    props.clearKeyword('');
+  };
+
   return (
     <Form onSubmit={formSumbitHandler} isFocused={props.isFocused}>
       <SearchInput type="text" placeholder="질환명을 입력해 주세요." {...props} />
-      <InputIcon isFocused={props.isFocused} />
+      <InputIcon isFocused={props.isFocused} deleteHandler={deleteHandler} />
     </Form>
   );
 }
