@@ -22,16 +22,11 @@ function App() {
     setIsInputFocused(true);
   };
 
-  const inputOnBlurHandler = () => {
-    setIsInputFocused(false);
-    setElIndexFocused(-1);
-  };
   const handleArrowUpKey = () => {
     if (elIndexFocused <= 0) {
       setElIndexFocused(searchData.length - 1);
     } else {
       setElIndexFocused(prev => prev - 1);
-
     }
   };
   const handleArrowDownKey = () => {
