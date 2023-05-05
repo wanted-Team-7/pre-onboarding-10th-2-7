@@ -28,7 +28,7 @@ function SearchResult({
 const Li = styled.li<{ isFocus: [number, number] }>`
   width: 100%;
   display: flex;
-  padding: 8px;
+  padding: 10px;
   cursor: pointer;
 
   background-color: ${props => (props.isFocus[0] === props.isFocus[1] ? '#90cdf4' : 'inherit')};

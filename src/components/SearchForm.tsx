@@ -29,7 +29,8 @@ const Form = styled.form<{ isFocused: boolean }>`
   align-items: center;
   justify-content: space-between;
 
-  border: ${props => (props.isFocused ? '2px solid #0074cc;' : '2px solid rgba(0,0,0,0.7)')};
+  background-color: white;
+  border: ${props => (props.isFocused ? '2px solid #0074cc;' : '2px solid white')};
   border-radius: 28px;
   padding: 10px 8px;
 `;

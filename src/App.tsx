@@ -69,7 +69,7 @@ function App() {
 
   return (
     <Main>
-      <Title>2주차 기업과제</Title>
+      <Title>2주차 기업과제 7팀</Title>
 
       <SearchForm
         value={searchKeyword}
@@ -90,11 +90,10 @@ function App() {
             )}
 
             {isLoading ||
-              (searchKeyword.trim() === '' && (
-                <SearchResultNone>최근 검색어가 없습니다.</SearchResultNone>
-              ))}
+              (searchData.length === 0 && <SearchResultNone>검색어 없음</SearchResultNone>)}
 
-            {isLoading || (searchData.length !== 0 && <hr />)}
+            {/* {isLoading || (searchData.length !== 0 && <hr />)} */}
+            {isLoading || (searchData.length !== 0 && <p>추천 검색어</p>)}
 
             {isLoading ||
               searchData.map((el, idx) => (
@@ -115,17 +114,22 @@ function App() {
 }
 
 const Main = styled.main`
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  position: relative;
-  height: 100%;
-  justify-content: center;
   align-items: center;
+  position: relative;
+  background-color: #cae9ff;
+
+  padding-top: 60px;
 `;
 
 const Title = styled.h1`
   font-size: 1.5em;
   margin: 14px 0;
+  text-align: center;
+  letter-spacing: -0.018em;
+  line-height: 1.6;
 `;
 
 const SearchResultsWrapper = styled.div`
@@ -133,14 +137,23 @@ const SearchResultsWrapper = styled.div`
   width: 300px;
   /* min-height: 40px; */
   border-radius: 16px;
-  border: 1px solid #0074cc;
-  padding: 10px;
+  /* border: 1px solid #0074cc; */
+  padding: 10px 0;
   margin-top: 6px;
+
+  background-color: white;
 
   ul {
     padding: 0;
     margin: 0;
     width: 100%;
+  }
+  p {
+    padding: 5px;
+    font-size: 11px;
+    color: #5d5d5d;
+
+    letter-spacing: -0.04em;
   }
 `;
 
@@ -148,6 +161,7 @@ const SearchResultNone = styled.li`
   color: rgba(0, 0, 0, 0.5);
   width: 100%;
   margin-left: 6px;
+  padding: 10px;
   cursor: default;
 `;
 
