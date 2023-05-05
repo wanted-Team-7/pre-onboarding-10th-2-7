@@ -22,26 +22,47 @@ function App() {
     setIsInputFocused(true);
   };
 
-  const inputOnKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.nativeEvent.isComposing) return;
+  const inputOnBlurHandler = () => {
+    setIsInputFocused(false);
+    setElIndexFocused(-1);
+  };
+  const handleArrowUpKey = () => {
+    if (elIndexFocused <= 0) {
+      setElIndexFocused(searchData.length - 1);
+    } else {
+      setElIndexFocused(prev => prev - 1);
 
-    if (searchData.length === 0 || (e.code !== 'ArrowUp' && e.code !== 'ArrowDown')) return;
-    e.preventDefault();
-
-    if (e.code === 'ArrowUp') {
-      if (elIndexFocused <= 0) {
-        setElIndexFocused(searchData.length - 1);
-      } else {
-        setElIndexFocused(prev => prev - 1);
-      }
     }
+  };
+  const handleArrowDownKey = () => {
+    if (elIndexFocused === searchData.length - 1) {
+      setElIndexFocused(0);
+    } else {
+      setElIndexFocused(prev => prev + 1);
+    }
+  };
+  const handleEscapeKey = () => {
+    setSearchData([]);
+    setSearchKeyword('');
+    setElIndexFocused(-1);
+  };
+  const inputOnKeyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const keyArr = ['ArrowUp', 'ArrowDown', 'Escape'];
 
-    if (e.code === 'ArrowDown') {
-      if (elIndexFocused === searchData.length - 1) {
-        setElIndexFocused(0);
-      } else {
-        setElIndexFocused(prev => prev + 1);
-      }
+    if (event.nativeEvent.isComposing) return;
+    if (searchData.length === 0 || !keyArr.includes(event.code)) return;
+    event.preventDefault();
+
+    switch (event.key) {
+      case 'ArrowUp':
+        handleArrowUpKey();
+        break;
+      case 'ArrowDown':
+        handleArrowDownKey();
+        break;
+      case 'Escape':
+        handleEscapeKey();
+        break;
     }
   };
   const liMouseOverHandler = (e: React.MouseEvent<HTMLLIElement>) => {
