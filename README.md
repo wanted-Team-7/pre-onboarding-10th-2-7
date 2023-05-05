@@ -1,11 +1,47 @@
 
-## 📃  검색창 구현
-### 작성중
+# 🔍 Search App
+- **프로젝트 기간:** 2023.05.02 ~ 2023.05. 05
+- **배포링크:** https://beamish-paletas-db66f4.netlify.app/
+
+
+## ⚙️ 실행 방법
+
+```bash
+$ npm install
+$ npm start
+```
+*api url 설정 방법 기입
+
+
+## 👨‍💻👩‍💻 팀원 목록
+
+| 이름   | GitHub Repository                                       |
+| ------ | ------------------------------------------------------ |
+| 이지윤 | [@1yoouoo](https://github.com/1yoouoo)                   |
+| 우상헌 | [@Withlaw](https://github.com/Withlaw)                   |
+| 권민영 | [@minnyoung](https://github.com/minnyoung)               |
+| 유재형 | [@JwithYOU](https://github.com/JwithYOU)                 |
+| 박정도 | [@jeongdopark](https://github.com/jeongdopark)           |
+| 김희진 | [@Jinnie-kim](https://github.com/Jinnie-kim)             |
+| 정승연 | [@xxyeon129](https://github.com/xxyeon129)               |
+| 이준용 | [@leejy001](https://github.com/leejy001)                 |
+
+
+## 🚀 구현 기능
+
+### 1️⃣ 검색창 UI 구현하기
+
+> 작성중
+
+---
 
 <br />
 
-## 📃  로컬 캐 기능 구현
-### 캐시 생성
+### 2️⃣ API 호출별로 로컬 캐싱하기
+
+> 캐시 생성
+
+
 ```ts
 // src/cache/searchDataCache.ts
 class SearchDataCache {
@@ -36,7 +72,9 @@ export default new SearchDataCache();
 - 검색어를 key로 하여 API 호출 결과 데이터와, 각 검색어를 캐싱할 때 `현재시간 + 만료시간`을 expire time으로 하는 cacheTime을 함께 저장합니다.
 - isCacheTimeValid() 메소드로 해당 검색어의 캐시가 유효한 지(expire time) 확인할 수 있습니다.
 
-### 캐싱
+<br />
+
+> 검색 결과값 캐싱
 ```jsx
 // src/apis/searchAPI.ts
 export const getSearchData = async (keyword: string) => {
@@ -57,20 +95,181 @@ export const getSearchData = async (keyword: string) => {
 ```
 - API를 호출할 때 해당 검색어가 캐시에 저장되었는지, 저장되었다면 만료기간이 지났는지 확인합니다. (캐시가 존재하지 않으면 isCacheTimeValid()가 false를 반환합니다.)
 - 유효한 캐시가 존재하면 캐시된 값을 반환하고, 존재하지 않으면 새로 API를 호출하고 그 값을 다시 캐싱합니다.
-- 기존에 expire time을 아래와 같이 setTimeout으로 구현하였으나, 검색 횟수가 많아지면 그만큼 setTimeout 실행 횟수도 증가하여 성능 저하를 야기할 수 있어 위와 같이 수정하였습니다.
+
+<br />
+
+<details>
+<summary>다른 캐시 구현 방법 살펴보기</summary>
+<div>
+  
+<br />
+  
+> cache API 사용
+  
+```tsx
+import axios from 'axios';
+
+const CAHCE_NAME = 'search-result';
+
+export const getSearchResult = async (word: string) => {
+  const URL = `/api/v1/search-conditions/?name=${word}`;
+  const cachedData = await caches.match(URL);
+
+  if (word.trim().length === 0) return [];
+
+  if (cachedData) {
+    const cachedDataList = await cachedData.json();
+    return cachedDataList.slice(0, 7);
+  }
+
+  try {
+    const res = await axios.get(URL);
+
+    console.info('calling api', res);
+
+    if (res.status !== 200) return;
+
+    caches.open(CAHCE_NAME).then(cache => {
+      cache.add(URL);
+    });
+
+    const result = res.data.slice(0, 7);
+
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+};
+```
+  <br />
+  
+  > Local Storage 사용
+  
+  ```ts
+export const getSearchWord = async (word: string) => {
+  if (word === '') return [];
+  const checkCache: string | null = localStorage.getItem(word);
+
+  if (!checkCache) {
+    console.info('api 호출');
+    const response = await axios.get(API_URL, { params: { name: word } });
+    const setData = {
+      data: response.data,
+      expireTime: new Date().getTime() + EXPIRE_TIME,
+    };
+
+    localStorage.setItem(word, JSON.stringify(setData));
+    return response.data;
+  } else {
+    return JSON.parse(checkCache).data;
+  }
+};
+```
+
+<br />
+  
+  > useCache 커스텀 훅 생성
+  
+```ts
+import { useState } from 'react';
+import { SearchResultTypes } from '../types/search';
+import { CacheType } from '../types/cache';
+import { ONE_MINUTE } from '../constants';
+
+export const useCache = () => {
+  const [cache, setCache] = useState<CacheType[]>([]);
+
+  const addCache = (key: string, value: SearchResultTypes[]) => {
+    const newCache: CacheType = { key, value };
+    setCache(prev => [...prev, newCache]);
+
+    setTimeout(() => {
+      setCache(prev => prev.filter(item => item.key !== newCache.key));
+    }, ONE_MINUTE);
+  };
+
+  const getCache = (key: string) => {
+    const curCache = cache.find(item => item.key === key);
+    return curCache ? curCache.value : null;
+  };
+
+  return { addCache, getCache };
+};
+
+export default useCache;
+  
+// useCache 적용
+const handleFetchSearchResult = async () => {
+  // ...
+  const data = getCache(search);
+  if (data !== null) {
+    setSearchResult(data);
+    setIndex(-1);
+    return;
+  }
+  const { data: result } = await searchApi(debouncedSearch);
+  addCache(search, result);
+  setSearchResult(result);
+  setIndex(-1);
+};
+```
+  
+  
+
+</div>
+</details>
+
+
+<details>
+<summary>다른 캐시 무효화 방법 살펴보기</summary>
+<div>
+
+  
+<br />
+
+> setTimeout으로 일정 시간이 지나면 캐시 제거
+
 ```jsx
-// setTimeout으로 expire time을 구현
 const caching = (key: string, data: ISearchData[]) => {
   cache[key] = data;
   setTimeout(() => {
     delete cache[key];
   }, CACHE_EXPIRE_TIME_SEC * 1000);
 };
-```
+```  
 
 <br />
 
-## 📃  디바운스 기능 구현
+> setInterval을 사용하여 일정 시간마다 Localstorage에 있는 데이터들의 만료 시간을 체크하고 만료 시간이 지난 데이터 제거
+
+```ts
+export const handleExpireCache = () => {
+  setInterval(() => {
+    // 만료시간 지난 캐시 삭제
+    console.log('expire');
+    for (let elem in localStorage) {
+      const cache = localStorage.getItem(elem);
+      const localStorageElem: StorageItem = JSON.parse(cache!);
+      if (localStorageElem?.expireTime && localStorageElem?.expireTime <= Date.now()) {
+        localStorage.removeItem(elem);
+      }
+    }
+  }, CHECK_CACHE_TIME);
+};
+```
+
+
+
+
+</div>
+</details>
+
+---
+  
+<br />
+
+### 3️⃣ 디바운스로 API 호출 횟수 줄이기
+  
 ```jsx
 // src/App.tsx
 useEffect(() => {
@@ -87,12 +286,15 @@ useEffect(() => {
 }, [searchKeyword]);
 ```
 - input 창에 검색어를 입력하면 searchKeyword state가 변화하고 위 이펙트 훅이 실행됩니다.
-- setTimeout을 통해 반복된 getSearchData() 실행을 지연시킵니다.
-- 이펙트 훅이 실행될 때마다 이전의 setTimeout을 초기화합니다.
+- setTimeout을 통해 반복된 getSearchData() 실행을 지연시킵니다. 지연시간은 `DEBOUNCE_TIMEOUT_SEC`로 변수화하여 관리합니다.
+- 이펙트 훅이 실행될 때마다 이전의 setTimeout 설정을 제거합니다.
 
+---
+  
 <br />
 
-## 📃  키보드로 요소 이동  구현 
+### 4️⃣ 키보드만으로 요소 이동하기
+
 ```jsx
 // src/App.tsx
 
@@ -127,17 +329,24 @@ const inputOnKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
 function SearchResult({ index, ... }) {
   //...
   return (
-    <Li data-index={index} ...>
-  // ...
+    <Li data-index={index} isFocus={[index, elIndexFocused]} ... >
+      {...}
     </Li>
   );
 }
+  
+const Li = styled.li<{ isFocus: [number, number] }>`
+  // ...
+  background-color: ${props => (props.isFocus[0] === props.isFocus[1] ? '#90cdf4' : 'inherit')};
+`;
 ```
 - inputOnKeyDownHandler 함수는 input 창에서 키보드를 입력하면 실행됩니다. 
 - 이때, 검색 결과가 1개 이상 존재하고 입력된 키가 `화살표위` 혹은 `화살표아래`일 때만 동작하도록 하였습니다.
 - 화살표 키를 누르면 검색 결과 개수 내에서 일정 숫자값(elIndexFocused)을 가집니다. 
 - 요소에 data-index 속성값으로 배열 index를 전달하고 이 값과 elIndexFocused를 비교하여 일치하는 경우에 focusing style을 적용하도록 하였습니다.
 
+<br />
+  
 ```jsx
 // src/App.tsx
 const liMouseOverHandler = (e: React.MouseEvent<HTMLLIElement>) => {
@@ -147,6 +356,7 @@ const liMouseOverHandler = (e: React.MouseEvent<HTMLLIElement>) => {
     setElIndexFocused(+index);
 };
 ```
-- 검색 결과 요소 위에 마우스를 올려놓으면 focusing style을 적용시켰고, elIndexFocused를 공유하여 키보드에 의한 동작과 연동되도록 하였습니다.
+- 마우스 hover 효과와 연동하여 UX를 개선하였습니다.
+- 추천 검색어 위에 마우스를 올려놓으면 키보드 입력과 같은 방법으로 focusing style이 적용되고, elIndexFocused를 공유하여 키보드 동작과 연동되도록 하였습니다.
 
 <br />
