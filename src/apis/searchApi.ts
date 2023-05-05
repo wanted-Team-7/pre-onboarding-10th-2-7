@@ -11,7 +11,9 @@ export const getSearchData = async (keyword: string) => {
   if (searchDataCache.isCacheTimeValid(keyword)) return searchDataCache.get(keyword);
 
   try {
-    const res = await axios.get<ISearchData[]>(`/api/v1/search-conditions/?name=${keyword}`);
+    const res = await axios.get<ISearchData[]>(
+      `https://api.clinicaltrialskorea.com/v1/search-conditions/?name=${keyword}`
+    );
     console.info('calling api');
 
     if (res.statusText !== 'OK') throw new Error(`${res.statusText} (${res.status})`);
