@@ -78,6 +78,9 @@ function App() {
         onBlur={inputOnBlurHandler}
         onKeyDown={inputOnKeyDownHandler}
         isFocused={isInputFocused}
+        setIsInputFocused={setIsInputFocused}
+        setElIndexFocused={setElIndexFocused}
+        setSearchKeyword={setSearchKeyword}
       />
 
       {isInputFocused && (
