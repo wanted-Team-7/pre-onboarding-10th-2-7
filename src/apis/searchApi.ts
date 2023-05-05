@@ -6,7 +6,7 @@ export interface ISearchData {
   id: number;
 }
 
-const PROXY = window.location.hostname === 'localhost' ? '' : '/proxy';
+const PROXY = window.location.hostname === 'localhost' ? '' : 'https://api.clinicaltrialskorea.com';
 
 export const getSearchData = async (keyword: string) => {
   if (keyword.trim() === '') return [];
