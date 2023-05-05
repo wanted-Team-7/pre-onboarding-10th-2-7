@@ -1,70 +1,114 @@
-# Getting Started with Create React App
+# 1차 기업 과제 - 7팀 김희진
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 1. 폴더 구조
+```
+📦src
+ ┣ 📂api
+ ┃ ┗ 📜baseApi.ts
+ ┣ 📂components
+ ┃ ┣ 📜SearchInput.tsx
+ ┃ ┣ 📜SearchResult.tsx
+ ┃ ┗ 📜SearchResultList.tsx
+ ┣ 📂style
+ ┃ ┣ 📜SearchInput.styled.ts
+ ┃ ┣ 📜SearchResult.styled.ts
+ ┃ ┗ 📜SearchResultList.styled.ts
+ ┣ 📂types
+ ┃ ┗ 📜result.d.ts
+ ┣ 📜App.tsx
+ ┣ 📜index.tsx
+ ┗ 📜setupProxy.js
+```
+## 2. 기능
+<br />
 
-## Available Scripts
+> ### 1️⃣ 검색 기능
 
-In the project directory, you can run:
 
-### `npm start`
+```tsx
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      getSearchResult(searchWord).then(result => setSearchResult(result));
+    }, 500);
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+    return () => clearTimeout(timer);
+  }, [searchWord]);
+```
+- 검색 시, 단어를 입력할 때마다 api 요청을 보내지 않기 위해 디바운싱을 사용하여
+0.5초에 한 번 api 요청을 보내도록 했습니다.
+- 디바운싱을 구현하기 위해 따로 hook을 만들지는 않았습니다. 
+- 하지만 디바운싱을 여러 곳에서 사용할 필요가 있어 확장성을 고려해야 한다면 hook을 만드는 것도 좋은 방법이라고 생각합니다.
+- 이번 프로젝트의 경우 원 페이지, 검색 창 구현만 진행했기 때문에 굳이 hook으로 빼지 않았습니다.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+<br />
 
-### `npm test`
+> ### 3️⃣ 로컬 캐시 기능
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```tsx
+import axios from 'axios';
 
-### `npm run build`
+const CAHCE_NAME = 'search-result';
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+export const getSearchResult = async (word: string) => {
+  const URL = `/api/v1/search-conditions/?name=${word}`;
+  const cachedData = await caches.match(URL);
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+  if (word.trim().length === 0) return [];
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  if (cachedData) {
+    const cachedDataList = await cachedData.json();
+    return cachedDataList.slice(0, 7);
+  }
 
-### `npm run eject`
+  try {
+    const res = await axios.get(URL);
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+    console.info('calling api', res);
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+    if (res.status !== 200) return;
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+    caches.open(CAHCE_NAME).then(cache => {
+      cache.add(URL);
+    });
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+    const result = res.data.slice(0, 7);
 
-## Learn More
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+};
+```
+- api를 요청하는 로직 안에서 웹 캐시, 캐시 스토리지를 이용해 캐싱 기능을 구현했습니다.
+- 호출된 url 주소의 응답을 캐시 스토리지에 저장합니다.
+- 같은 단어를 검색하는 경우 캐시 스토리지에 같은 url로 검색된 응답이 있는지 캐시의 ```match``` 메소드를 사용하여 먼저 체크합니다.
+- 같은 응답이 존재한다면 캐시 스토리지에서 응답을 가져와서 리턴해주고 따로 api 요청을 하지 않습니다.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+<br />
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+> ### 4️⃣ 키보드 방향키로 리스트 이동 기능
 
-### Code Splitting
+```tsx
+const [focusIndex, setFocusIndex] = useState<number>(-1);
+const focusRef = useRef<HTMLOListElement>(null);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+ const keydownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    switch (e.key) {
+      case 'ArrowUp':
+        e.preventDefault();
+        setFocusIndex(prevIndex => (prevIndex <= 0 ? searchResult.length - 1 : prevIndex - 1));
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        setFocusIndex(prevIndex => (prevIndex >= searchResult.length - 1 ? 0 : prevIndex + 1));
+        break;
+      case 'Enter':
+        break;
+      default:
+        break;
+    }
+  };
+```
+- keydownHandler 이벤트는 검색 인풋 창에서 키보드 방향키를 조작할 때 실행됩니다.
+- 방향키를 누르면 focusIndex 초기 state값을 기준으로 검색된 결과 리스트 내에서 
+- focusIndex 값과 검색 결과 리스트에 부여한 index 값을 비교하여 일치하는 경우 focusing 된 검색 결과 리스트에 배경 컬러 변경이 적용되도록 했습니다.
