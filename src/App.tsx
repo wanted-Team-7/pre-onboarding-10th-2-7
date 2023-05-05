@@ -21,10 +21,7 @@ function App() {
   const inputOnFocusHandler = () => {
     setIsInputFocused(true);
   };
-  const inputOnBlurHandler = () => {
-    setIsInputFocused(false);
-    setElIndexFocused(-1);
-  };
+
   const inputOnKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.nativeEvent.isComposing) return;
 
@@ -75,7 +72,6 @@ function App() {
         value={searchKeyword}
         onChange={inputOnChangeHandler}
         onFocus={inputOnFocusHandler}
-        onBlur={inputOnBlurHandler}
         onKeyDown={inputOnKeyDownHandler}
         isFocused={isInputFocused}
         setIsInputFocused={setIsInputFocused}
