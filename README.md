@@ -1,70 +1,140 @@
-# Getting Started with Create React App
+# 박정도
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<br />
 
-## Available Scripts
 
-In the project directory, you can run:
+## ▪️ 과제
+- 검색창 구현 + 검색어 추천 기능 구현 + 캐싱 기능 구현
 
-### `npm start`
+<br />
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## ▪️ 주요 기능 설명 
+<br>
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### ▫️ **질환명 검색시 API 호출 통해서 검색어 추천 기능 & Localstorage 캐싱**
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```ts
+// API 호출 및 캐싱
+export const getSearchWord = async (word: string) => {
+  if (word === '') return [];
+  const checkCache: string | null = localStorage.getItem(word);
 
-### `npm run build`
+  if (!checkCache) {
+    console.info('api 호출');
+    const response = await axios.get(API_URL, { params: { name: word } });
+    const setData = {
+      data: response.data,
+      expireTime: new Date().getTime() + EXPIRE_TIME,
+    };
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    localStorage.setItem(word, JSON.stringify(setData));
+    return response.data;
+  } else {
+    return JSON.parse(checkCache).data;
+  }
+};
+```
+<br>
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- LocalStorage를 선택한 이유
+  - 5MB의 저장 공간
+  - JSON object 형태 데이터 저장 가능
+  - '추천 검색어' 데이터는 보안의 필요성이 낮기 떄문에
+  - 데이터 영구 보관 ( cache expire 로직 따로 구현 )
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+<br>
 
-### `npm run eject`
+- 로직 설명
+  - API 호출하기 전, LocalStorage에 해당 검색어가 있는지 확인합니다. <br>
+  **<U>해당 검색어가 존재하는 경우</U>** API 호출 없이 데이터를 return 합니다. <br>
+  **<U>해당 검색어가 존재하지 않는 경우</U>** API 호출을 진행하고 LocalStorage에 API 결과값 데이터와 expireTime을 객체 형태로 저장하며 API 결과값 데이터를 반환합니다.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+<br>
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```ts
+// cache expire time
+export const handleExpireCache = () => {
+  setInterval(() => {
+    // 만료시간 지난 캐시 삭제
+    console.log('expire');
+    for (let elem in localStorage) {
+      const cache = localStorage.getItem(elem);
+      const localStorageElem: StorageItem = JSON.parse(cache!);
+      if (localStorageElem?.expireTime && localStorageElem?.expireTime <= Date.now()) {
+        localStorage.removeItem(elem);
+      }
+    }
+  }, CHECK_CACHE_TIME);
+};
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- 로직 설명 
+  - setInterval을 사용하여 일정 주기를 통해 Localstorage에 있는 데이터들의 만료 시간을 확인합니다. 만료 시간이 지난 데이터는 삭제됩니다.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+<br>
 
-## Learn More
+### ▫️ **useDebounce hook**
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```ts
+import { useEffect, useState } from 'react';
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+export const useDebounce = (value: string, delay: number) => {
+  const [debounceValue, setDebounceValue] = useState<string>(value);
 
-### Code Splitting
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebounceValue(value);
+    }, delay);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
 
-### Analyzing the Bundle Size
+  return debounceValue;
+};
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```
 
-### Making a Progressive Web App
+- 구현 이유 
+  - 입력마다 API 호출하지 않도록 API 호출 횟수를 줄이는 전략 수립 및 실행하기 위해
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+<br>
 
-### Advanced Configuration
+- 로직 설명 
+  - 입력값(인자 value)과 원하는 지연 시간(인자 delay)을 인자로 받아옵니다. <br>
+  인자로 받아온 지연 시간을 setTimeout에 설정을 하고 
+  delay 시간 안에 다른 이벤트가 발생하지 않는다면 setDebounceValue가 실행되어 바뀐 값이 return 되고 다른 이벤트가 발생하면 기존 값이 그대로 return 됩니다
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## ▪️ 폴더 구조
+```
+📦src
+ ┣ 📂api
+ ┃ ┗ 📜client.ts
+ ┣ 📂assets
+ ┃ ┣ 📜magnifier.svg
+ ┃ ┗ 📜delete.svg
+ ┣ 📂components
+ ┃ ┣ 📂inputBox
+ ┃ ┃  ┣ 📜inputBox.tsx
+ ┃ ┃  ┗ 📜inputBox.styled.ts
+ ┃ ┗ 📂searchBox
+ ┃    ┣ 📜searchBox.tsx
+ ┃    ┗ 📜searchBox.styled.tsx
+ ┣ 📂hooks
+ ┃ ┗ 📜useDebounce.tsx 
+ ┣ 📂utils
+ ┃ ┗ expireCache.ts
+ ┣ 📂page
+ ┃ ┣ 📜main.tsx
+ ┃ ┣ 📜main.styled.tsx
+ ┣ 📜App.tsx
+ ┣ 📜index.tsx
+ ┣ 📜constants.ts
+ ┣ 📜custom.d.ts
+ ┣ 📜type.ts
+ ┗ 📜setupProxy.js
+ ```
