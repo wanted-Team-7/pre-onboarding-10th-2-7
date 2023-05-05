@@ -18,7 +18,7 @@ export const getSearchData = async (keyword: string) => {
     );
     console.info('calling api');
 
-    if (res.statusText !== 'OK') throw new Error(`${res.statusText} (${res.status})`);
+    // if (res.statusText !== 'OK') throw new Error(`${res.statusText} (${res.status})`);
 
     const data = res.data.slice(0, 7);
     searchDataCache.add(keyword, data);
