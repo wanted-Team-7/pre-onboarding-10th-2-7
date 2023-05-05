@@ -31,13 +31,37 @@ $ npm start
 
 ### 1️⃣ 검색창 UI 구현하기
 
-> 작성중
+
+- 검색 요청시 `검색중...`이 나타나도록 하였습니다.
+- 검색어가 없을 시 `검색어 없음`이 나타나도록 하였습니다.
+- 추천 검색어에서 사용자가 입력한 값을 `강조`처리하였습니다.
+- 추천 검색어 포커싱 효과를 `키보드 상하키 입력` 이벤트와 `마우스 hover` 이벤트에 함께 적용하였습니다.
+- 처음 추천 검색어에서 `화살표위`키를 누르면 마지막 추천 검색어로 이동하고, 마지막 추천 검색어에서 `화살표아래`키를 누르면 처음 추천 검색어로 이동하도록 하였습니다.
+- 원하는 검색어가 없으면 `esc`키를 눌러 검색어를 초기화 할 수 있도록 하였습니다.
 
 ---
 
 <br />
 
 ### 2️⃣ API 호출별로 로컬 캐싱하기
+
+<details>
+<summary>캐싱이란?</summary>
+<div>
+
+- 캐싱은 파일 복사본을 캐시 또는 임시 저장 위치에 저장하여 보다 빠르게 액세스할 수 있도록 하는 프로세스입니다.
+
+
+  
+#### 캐싱의 이점
+
+- 캐싱을 사용하면 처리량을 크게 높이고 백엔드 데이터베이스와 관련한 데이터 검색 지연 시간을 줄일 수 있으므로 애플리케이션의 **전반적인 성능이 향상**됩니다. 
+- 모든 클라이언트를 서비스할 필요가 없어지므로 **서버의 부하를 완화**합니다.
+- 캐싱을 사용하면 이전에 검색하거나 계산한 데이터를 효율적으로 **재사용**할 수 있습니다.
+
+</div>
+</details>
+
 
 > 캐시 생성
 
@@ -68,8 +92,9 @@ class SearchDataCache {
 
 export default new SearchDataCache();
 ```
-- 스크립트 내부에서 클래스로 생성하였습니다.
+- 캐시는 스크립트 내부에서 클래스로 생성하였습니다.
 - 검색어를 key로 하여 API 호출 결과 데이터와, 각 검색어를 캐싱할 때 `현재시간 + 만료시간`을 expire time으로 하는 cacheTime을 함께 저장합니다.
+- 캐시 만료 시간은 `CACHE_EXPIRE_TIME_SEC`로 변수화하여 관리합니다.
 - isCacheTimeValid() 메소드로 해당 검색어의 캐시가 유효한 지(expire time) 확인할 수 있습니다.
 
 <br />
@@ -286,7 +311,8 @@ useEffect(() => {
 }, [searchKeyword]);
 ```
 - input 창에 검색어를 입력하면 searchKeyword state가 변화하고 위 이펙트 훅이 실행됩니다.
-- setTimeout을 통해 반복된 getSearchData() 실행을 지연시킵니다. 지연시간은 `DEBOUNCE_TIMEOUT_SEC`로 변수화하여 관리합니다.
+- setTimeout을 통해 반복된 getSearchData() 실행을 지연시킵니다.
+- 지연시간은 `DEBOUNCE_TIMEOUT_SEC`로 변수화하여 관리합니다.
 - 이펙트 훅이 실행될 때마다 이전의 setTimeout 설정을 제거합니다.
 
 ---
@@ -301,29 +327,27 @@ useEffect(() => {
 // ...
 const [elIndexFocused, setElIndexFocused] = useState(-1);
   
-const inputOnKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.nativeEvent.isComposing) return;
+const inputOnKeyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const keyArr = ['ArrowUp', 'ArrowDown', 'Escape'];
 
-    if (searchData.length === 0 || (e.code !== 'ArrowUp' && e.code !== 'ArrowDown')) return;
-    e.preventDefault();
+  if (event.nativeEvent.isComposing) return;
+  if (searchData.length === 0 || !keyArr.includes(event.key)) return;
+  
+  event.preventDefault();
 
-    if (e.code === 'ArrowUp') {
-      if (elIndexFocused <= 0) {
-        setElIndexFocused(searchData.length - 1);
-      } else {
-        setElIndexFocused(prev => prev - 1);
-      }
-    }
-
-    if (e.code === 'ArrowDown') {
-      if (elIndexFocused === searchData.length - 1) {
-        setElIndexFocused(0);
-      } else {
-        setElIndexFocused(prev => prev + 1);
-      }
-    }
+  switch (event.key) {
+    case 'ArrowUp':
+      handleArrowUpKey();
+      break;
+    case 'ArrowDown':
+      handleArrowDownKey();
+      break;
+    case 'Escape':
+      handleEscapeKey();    
+      break;
+  }
 };
-// ...
+
 
 // src/components/SearchResult.tsx
 function SearchResult({ index, ... }) {
@@ -344,6 +368,7 @@ const Li = styled.li<{ isFocus: [number, number] }>`
 - 이때, 검색 결과가 1개 이상 존재하고 입력된 키가 `화살표위` 혹은 `화살표아래`일 때만 동작하도록 하였습니다.
 - 화살표 키를 누르면 검색 결과 개수 내에서 일정 숫자값(elIndexFocused)을 가집니다. 
 - 요소에 data-index 속성값으로 배열 index를 전달하고 이 값과 elIndexFocused를 비교하여 일치하는 경우에 focusing style을 적용하도록 하였습니다.
+  
 
 <br />
   
