@@ -6,13 +6,15 @@ export interface ISearchData {
   id: number;
 }
 
+const PROXY = window.location.hostname === 'localhost' ? '' : '/proxy';
+
 export const getSearchData = async (keyword: string) => {
   if (keyword.trim() === '') return [];
   if (searchDataCache.isCacheTimeValid(keyword)) return searchDataCache.get(keyword);
 
   try {
     const res = await axios.get<ISearchData[]>(
-      `https://api.clinicaltrialskorea.com/v1/search-conditions/?name=${keyword}`
+      `${PROXY}https://api.clinicaltrialskorea.com/v1/search-conditions/?name=${keyword}`
     );
     console.info('calling api');
 
