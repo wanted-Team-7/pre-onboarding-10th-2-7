@@ -1,26 +1,30 @@
-// import axios from 'axios';
-// import { useEffect } from 'react';
+import { useState } from 'react';
 import SearchForm from './components/SearchForm';
+import SearchList from './components/SearchList';
+import * as S from './styles/app.style';
 
-// interface IFetch {
-//   name: string;
-//   id: number;
-// }
 function App() {
-  // useEffect(() => {
-  //   (async () => {
-  //     try {
-  //       const { data } = await axios.get<IFetch>('/api/v1/search-conditions/?name=갑상선');
-  //       console.log('response data: ', data);
-  //     } catch (error) {
-  //       console.error('fetch error: ', error);
-  //     }
-  //   })();
-  // }, []);
-
+  const [showList, setShowList] = useState(false);
+  const onFocus = () => {
+    setShowList(true);
+  };
+  const onBlur = () => {
+    setShowList(false);
+  };
   return (
     <>
-      <SearchForm />
+      <S.Layout>
+        <S.Wrapper>
+          <S.StyledH2>
+            <br />
+            국내 모든 임상시험 검색하고
+            <br />
+            온라인으로 참여하기
+          </S.StyledH2>
+          <SearchForm onFocus={onFocus} onBlur={onBlur} />
+          {showList ? <SearchList onFocus={onFocus} onBlur={onBlur}></SearchList> : null}
+        </S.Wrapper>
+      </S.Layout>
     </>
   );
 }

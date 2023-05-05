@@ -1,6 +1,11 @@
 import * as S from '../styles/searchList.style';
 
-const SearchList = () => {
+interface SearchListProp {
+  onFocus: () => void;
+  onBlur: () => void;
+}
+
+const SearchList = ({ onFocus, onBlur }: SearchListProp) => {
   return (
     <S.searchListContainer>
       <S.recentSearchText>최근 검색어</S.recentSearchText>

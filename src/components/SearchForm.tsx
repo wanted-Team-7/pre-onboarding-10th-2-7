@@ -1,32 +1,23 @@
-import { useState } from 'react';
-import SearchButton from '../utils/SearchButton';
-import SearchList from './SearchList';
 import * as S from '../styles/searchForm.style';
+import { LargeSearchIcon } from '../assets/MagnifierSVG';
+import SearchList from './SearchList';
 
-const SearchForm = () => {
-  const [inputText, setInputText] = useState('');
-  const [onFocusCheck, setOnFocusCheck] = useState(false);
+interface SearchFormProps {
+  onFocus: () => void;
+  onBlur: () => void;
+}
 
-  const changeBoolean = () => {
-    setOnFocusCheck(!onFocusCheck);
-  };
-
+const SearchForm = ({ onFocus, onBlur }: SearchFormProps) => {
   return (
-    <S.wrapper>
-      <S.container>
-        <S.wrapper2>
-          <S.searchInput
-            placeholder="질환명을 입력해 주세요."
-            onFocus={changeBoolean}
-            onBlur={changeBoolean}
-            onChange={e => setInputText(e.target.value)}
-            value={inputText}
-          ></S.searchInput>
-        </S.wrapper2>
-        {onFocusCheck ? <SearchList /> : null}
-        <SearchButton />
-      </S.container>
-    </S.wrapper>
+    <>
+      <S.StyledForm>
+        <S.StyledLabel>
+          <S.StyledInput placeholder="질환명을 입력해 주세요" onFocus={onFocus} onBlur={onBlur} />
+        </S.StyledLabel>
+        <LargeSearchIcon />
+      </S.StyledForm>
+      <SearchList onFocus={onFocus} onBlur={onBlur}></SearchList>
+    </>
   );
 };
 
