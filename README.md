@@ -1,7 +1,7 @@
 
 # 🔍 Search App
 - **프로젝트 기간:** 2023.05.02 ~ 2023.05. 05
-- **배포링크:** https://beamish-paletas-db66f4.netlify.app/
+- **배포링크:** https://pre-onboarding-10th-2-7.netlify.app/
 
 
 ## ⚙️ 실행 방법
@@ -10,7 +10,6 @@
 $ npm install
 $ npm start
 ```
-*로컬에서 프록시를 이용해야 할 경우 src/apis/searchApi.ts에서 axios.get()에 전달하는 url 값을 `/api/v1/search-conditions/?name=${keyword}` 로 수정해주시기 바랍니다.
 
 
 ## 👨‍💻👩‍💻 팀원 목록
