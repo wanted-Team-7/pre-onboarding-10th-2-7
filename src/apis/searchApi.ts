@@ -12,7 +12,7 @@ export const getSearchData = async (keyword: string) => {
 
   try {
     const res = await axios.get<ISearchData[]>(`/api/v1/search-conditions/?name=${keyword}`);
-    console.info('calling api', res);
+    console.info('calling api');
 
     if (res.statusText !== 'OK') throw new Error(`${res.statusText} (${res.status})`);
 
