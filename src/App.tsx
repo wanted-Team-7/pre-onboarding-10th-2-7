@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import SearchForm from './components/SearchForm';
 import SearchResult from './components/SearchResult';
-import { DEBOUNCE_TIMEOUT_SEC } from './constants/constant';
-import { ISearchData, getSearchData } from './apis/searchApi';
 import SearchResultKeyword from './components/SearchResultKeyword';
+import useSearchQuery from './hooks/useSearchQuery';
 
 function App() {
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [searchData, setSearchData] = useState<ISearchData[]>([]);
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [elIndexFocused, setElIndexFocused] = useState(-1);
 
+  const { searchData, isLoading, setIsLoading } = useSearchQuery(searchKeyword);
   const inputOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchKeyword(e.currentTarget.value);
     setIsLoading(true);
@@ -37,15 +35,13 @@ function App() {
     }
   };
   const handleEscapeKey = () => {
-    setSearchData([]);
     setSearchKeyword('');
     setElIndexFocused(-1);
   };
   const inputOnKeyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const keyArr = ['ArrowUp', 'ArrowDown', 'Escape'];
-
     if (event.nativeEvent.isComposing) return;
-    if (searchData.length === 0 || !keyArr.includes(event.code)) return;
+    if (searchData.length === 0 || !keyArr.includes(event.key)) return;
     event.preventDefault();
 
     switch (event.key) {
@@ -60,19 +56,6 @@ function App() {
         break;
     }
   };
-
-  useEffect(() => {
-    const debounceTimeout = setTimeout(async () => {
-      try {
-        const data = await getSearchData(searchKeyword);
-        setSearchData(data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Fetch error! ', error);
-      }
-    }, DEBOUNCE_TIMEOUT_SEC * 1000);
-    return () => clearTimeout(debounceTimeout);
-  }, [searchKeyword]);
 
   return (
     <Main>
@@ -92,7 +75,7 @@ function App() {
       {isInputFocused && (
         <SearchResultsWrapper>
           <ul>
-            {isLoading && searchData.length === 0 ? (
+            {isLoading ? (
               <SearchResultNone>검색중...</SearchResultNone>
             ) : (
               <SearchResultKeyword>{searchKeyword}</SearchResultKeyword>
