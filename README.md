@@ -13,6 +13,9 @@ $ npm start
 
 
 ## 👨‍💻👩‍💻 팀원 목록
+<details>
+<summary>목록 보기</summary>
+<div>
 
 | 이름   | GitHub Repository                                       |
 | ------ | ------------------------------------------------------ |
@@ -25,6 +28,8 @@ $ npm start
 | 정승연 | [@xxyeon129](https://github.com/xxyeon129)               |
 | 이준용 | [@leejy001](https://github.com/leejy001)                 |
 
+</div>
+</details>
 
 ## 🚀 구현 기능
 
