@@ -60,12 +60,6 @@ function App() {
         break;
     }
   };
-  const liMouseOverHandler = (e: React.MouseEvent<HTMLLIElement>) => {
-    const { index } = e.currentTarget.dataset;
-    if (index === undefined) return;
-    if (+index === elIndexFocused) return;
-    setElIndexFocused(+index);
-  };
 
   useEffect(() => {
     const debounceTimeout = setTimeout(async () => {
@@ -116,8 +110,8 @@ function App() {
                   key={el.id}
                   name={el.name}
                   index={idx}
-                  onMouseOver={liMouseOverHandler}
                   elIndexFocused={elIndexFocused}
+                  setElIndexFocused={setElIndexFocused}
                   searchKeywordLength={searchKeyword.length}
                 />
               ))}

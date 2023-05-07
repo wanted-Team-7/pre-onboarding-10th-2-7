@@ -10,8 +10,8 @@ export class SearchDataCache {
 
   private expireTime = 0;
 
-  constructor(time : number) {
-    this.expireTime = time
+  constructor(time: number) {
+    this.expireTime = time;
   }
 
   get(key: string) {
