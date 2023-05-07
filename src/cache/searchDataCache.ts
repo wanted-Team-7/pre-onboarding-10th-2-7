@@ -1,12 +1,18 @@
 import { ISearchData } from '../apis/searchApi';
 import { CACHE_EXPIRE_TIME_SEC } from '../constants/constant';
 
-class SearchDataCache {
+export class SearchDataCache {
   private cache: {
     [key: string]: ISearchData[];
   } = {};
 
   private cacheTime: { [key: string]: number } = {};
+
+  private expireTime = 0;
+
+  constructor(time : number) {
+    this.expireTime = time
+  }
 
   get(key: string) {
     return this.cache[key];
@@ -14,7 +20,7 @@ class SearchDataCache {
 
   add(key: string, data: ISearchData[]) {
     this.cache[key] = data;
-    this.cacheTime[key] = new Date().getTime() + CACHE_EXPIRE_TIME_SEC * 1000;
+    this.cacheTime[key] = new Date().getTime() + this.expireTime * 1000;
   }
 
   isCacheTimeValid(key: string) {
@@ -23,4 +29,4 @@ class SearchDataCache {
   }
 }
 
-export default new SearchDataCache();
+export default new SearchDataCache(CACHE_EXPIRE_TIME_SEC);
