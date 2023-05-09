@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import SearchForm from './components/SearchForm';
-import SearchResult from './components/SearchResult';
-import SearchResultKeyword from './components/SearchResultKeyword';
 import useSearchQuery from './hooks/useSearchQuery';
+import SearchResults from './components/SearchResults';
 
 function App() {
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -68,33 +67,13 @@ function App() {
       />
 
       {isInputFocused && (
-        <SearchResultsWrapper>
-          <ul>
-            {isLoading ? (
-              <SearchResultNone>검색중...</SearchResultNone>
-            ) : (
-              <SearchResultKeyword>{searchKeyword}</SearchResultKeyword>
-            )}
-
-            {isLoading ||
-              (searchData.length === 0 && <SearchResultNone>검색어 없음</SearchResultNone>)}
-
-            {/* {isLoading || (searchData.length !== 0 && <hr />)} */}
-            {isLoading || (searchData.length !== 0 && <p>추천 검색어</p>)}
-
-            {isLoading ||
-              searchData.map((el, idx) => (
-                <SearchResult
-                  key={el.id}
-                  name={el.name}
-                  index={idx}
-                  elIndexFocused={elIndexFocused}
-                  setElIndexFocused={setElIndexFocused}
-                  searchKeywordLength={searchKeyword.length}
-                />
-              ))}
-          </ul>
-        </SearchResultsWrapper>
+        <SearchResults
+          searchKeyword={searchKeyword}
+          isLoading={isLoading}
+          searchData={searchData}
+          elIndexFocused={elIndexFocused}
+          setElIndexFocused={setElIndexFocused}
+        />
       )}
     </Main>
   );
@@ -117,39 +96,6 @@ const Title = styled.h1`
   text-align: center;
   letter-spacing: -0.018em;
   line-height: 1.6;
-`;
-
-const SearchResultsWrapper = styled.div`
-  font-size: 16px;
-  width: 300px;
-  /* min-height: 40px; */
-  border-radius: 16px;
-  /* border: 1px solid #0074cc; */
-  padding: 10px 0;
-  margin-top: 6px;
-
-  background-color: white;
-
-  ul {
-    padding: 0;
-    margin: 0;
-    width: 100%;
-  }
-  p {
-    padding: 5px;
-    font-size: 11px;
-    color: #5d5d5d;
-
-    letter-spacing: -0.04em;
-  }
-`;
-
-const SearchResultNone = styled.li`
-  color: rgba(0, 0, 0, 0.5);
-  width: 100%;
-  margin-left: 6px;
-  padding: 10px;
-  cursor: default;
 `;
 
 export default App;
