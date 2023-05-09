@@ -6,15 +6,19 @@ export interface ISearchData {
   id: number;
 }
 
+const PROXY = window.location.hostname === 'localhost' ? '' : '/proxy';
+
 export const getSearchData = async (keyword: string) => {
   if (keyword.trim() === '') return [];
   if (searchDataCache.isCacheTimeValid(keyword)) return searchDataCache.get(keyword);
 
   try {
-    const res = await axios.get<ISearchData[]>(`/api/v1/search-conditions/?name=${keyword}`);
+    const res = await axios.get<ISearchData[]>(
+      `${PROXY}/api/v1/search-conditions/?name=${keyword}`
+    );
     console.info('calling api');
 
-    if (res.statusText !== 'OK') throw new Error(`${res.statusText} (${res.status})`);
+    // if (res.statusText !== 'OK') throw new Error(`${res.statusText} (${res.status})`);
 
     const data = res.data.slice(0, 7);
     searchDataCache.add(keyword, data);

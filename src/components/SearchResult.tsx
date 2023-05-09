@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as SearchIcon } from '../assets/search_icon.svg';
 
@@ -7,18 +7,25 @@ interface ISearchResult {
   elIndexFocused: number;
   name: string;
   searchKeywordLength: number;
-  onMouseOver: (e: React.MouseEvent<HTMLLIElement>) => void;
+  setElIndexFocused: Dispatch<SetStateAction<number>>;
 }
 
 function SearchResult({
   index,
-  onMouseOver,
+  setElIndexFocused,
   elIndexFocused,
   name,
   searchKeywordLength,
 }: ISearchResult) {
+  const liMouseOverHandler = (e: React.MouseEvent<HTMLLIElement>) => {
+    const { index } = e.currentTarget.dataset;
+    if (index === undefined) return;
+    if (+index === elIndexFocused) return;
+    setElIndexFocused(+index);
+  };
+
   return (
-    <Li onMouseOver={onMouseOver} data-index={index} isFocus={[index, elIndexFocused]}>
+    <Li onMouseOver={liMouseOverHandler} data-index={index} isFocus={[index, elIndexFocused]}>
       <SearchIcon width={16} height={16} color="rgba(0, 0, 0, 0.5)" />
       <strong>{name.slice(0, searchKeywordLength)}</strong>
       <span>{name.slice(searchKeywordLength)}</span>

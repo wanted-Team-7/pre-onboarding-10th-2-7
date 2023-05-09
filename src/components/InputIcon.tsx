@@ -4,13 +4,14 @@ import { ReactComponent as CloseIcon } from '../assets/close_icon.svg';
 
 interface IInputIconProps {
   isFocused: boolean;
+  onClickDeleteBtn: () => void;
 }
 
-function InputIcon({ isFocused }: IInputIconProps) {
+function InputIcon({ isFocused, onClickDeleteBtn }: IInputIconProps) {
   return (
     <IconWrapper>
       {isFocused && (
-        <CloseIconButton>
+        <CloseIconButton onClick={onClickDeleteBtn}>
           <CloseIcon width={12} height={12} color="white" />
         </CloseIconButton>
       )}
