@@ -39,22 +39,17 @@ function App() {
     setElIndexFocused(-1);
   };
   const inputOnKeyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    const keyArr = ['ArrowUp', 'ArrowDown', 'Escape'];
+    const functionFor: { [key: string]: () => void } = {
+      ArrowUp: handleArrowUpKey,
+      ArrowDown: handleArrowDownKey,
+      Escape: handleEscapeKey,
+    };
+
     if (event.nativeEvent.isComposing) return;
-    if (searchData.length === 0 || !keyArr.includes(event.key)) return;
+    if (searchData.length === 0 || !Object.keys(functionFor).includes(event.key)) return;
     event.preventDefault();
 
-    switch (event.key) {
-      case 'ArrowUp':
-        handleArrowUpKey();
-        break;
-      case 'ArrowDown':
-        handleArrowDownKey();
-        break;
-      case 'Escape':
-        handleEscapeKey();
-        break;
-    }
+    return functionFor[event.key]();
   };
 
   return (
