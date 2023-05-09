@@ -20,12 +20,7 @@ function SearchForm(props: ISearchForm) {
   };
   const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const handleFocusOut = ({ target }: any) => {
-    if (!formRef.current?.contains(target)) {
-      props.setIsInputFocused(false);
-      props.setElIndexFocused(-1);
-    }
-  };
+  const handleFocusOut = ({ target }: any) => {};
 
   const onClickDeleteBtn = () => {
     props.setSearchKeyword('');
